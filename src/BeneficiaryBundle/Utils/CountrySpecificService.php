@@ -26,11 +26,20 @@ class CountrySpecificService
 
     }
 
+    /**
+     * @param $countryIso3
+     * @return object[]
+     */
     public function getAll($countryIso3)
     {
         return $this->em->getRepository(CountrySpecific::class)->findBy(["countryIso3" => $countryIso3]);
     }
 
+    /**
+     * @param $countryIso3
+     * @param array $countrySpecificArray
+     * @return CountrySpecific
+     */
     public function create($countryIso3, array $countrySpecificArray)
     {
         $countrySpecific = new CountrySpecific($countrySpecificArray["field"], strtolower($countrySpecificArray["type"]), $countryIso3);
@@ -41,6 +50,12 @@ class CountrySpecificService
         return $countrySpecific;
     }
 
+    /**
+     * @param CountrySpecific $countrySpecific
+     * @param $countryIso3
+     * @param array $countrySpecificArray
+     * @return CountrySpecific
+     */
     public function update(CountrySpecific $countrySpecific, $countryIso3, array $countrySpecificArray)
     {
         $countrySpecific->setType($countrySpecificArray["type"])
@@ -74,12 +89,13 @@ class CountrySpecificService
 
     /**
      * Export all the countries specifics in a CSV file
+     * @param string $type
      * @return mixed
      */
-    public function exportToCsv() {
+    public function exportToCsv(string $type) {
 
         $exportableTable = $this->em->getRepository(CountrySpecific::class)->findAll();
-        return $this->container->get('export_csv_service')->export($exportableTable, 'country');
+        return $this->container->get('export_csv_service')->export($exportableTable, 'country', $type);
 
     }
 

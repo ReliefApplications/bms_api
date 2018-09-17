@@ -298,24 +298,37 @@ class BeneficiaryService
         $this->em->flush();
         return true;
     }
-    
+
+    /**
+     * @param string $iso3
+     * @return int
+     */
     public function countAll(string $iso3)
     {
         $count = (int) $this->em->getRepository(Beneficiary::class)->countAllInCountry($iso3);
         return $count;
     }
 
-    public function exportToCsvBeneficiariesInDistribution(DistributionData $distributionData) {
+    /**
+     * @param DistributionData $distributionData
+     * @param string $type
+     * @return mixed
+     */
+    public function exportToCsvBeneficiariesInDistribution(DistributionData $distributionData, string $type) {
 
         $beneficiaries = $this->em->getRepository(Beneficiary::class)->getAllofDistribution($distributionData);
-        return $this->container->get('export_csv_service')->export($beneficiaries,'beneficiaryInDistribution');
+        return $this->container->get('export_csv_service')->export($beneficiaries,'beneficiaryInDistribution', $type);
 
     }
 
-    public function exportToCsv() {
+    /**
+     * @param string $type
+     * @return mixed
+     */
+    public function exportToCsv(string $type) {
 
         $exportableTable = $this->em->getRepository(Beneficiary::class)->findAll();
-        return $this->container->get('export_csv_service')->export($exportableTable,'beneficiaryhousehoulds');
+        return $this->container->get('export_csv_service')->export($exportableTable,'beneficiaryhousehoulds', $type);
 
     }
 

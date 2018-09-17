@@ -18,6 +18,9 @@ use UserBundle\Entity\UserProject;
 
 class ProjectService
 {
+    /**
+     * @var EntityManagerInterface
+     */
     protected $em;
 
     /** @var Serializer $serializer */
@@ -29,6 +32,13 @@ class ProjectService
     /** @var ContainerInterface $container */
     private $container;
 
+    /**
+     * ProjectService constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param Serializer $serializer
+     * @param ValidatorInterface $validator
+     * @param ContainerInterface $container
+     */
     public function __construct(EntityManagerInterface $entityManager, Serializer $serializer, ValidatorInterface $validator , ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -68,7 +78,11 @@ class ProjectService
         $this->em->flush();
         return $projects;
     }
-    
+
+    /**
+     * @param string $iso3
+     * @return mixed
+     */
     public function countAll(string $iso3)
     {
         $count = $this->em->getRepository(Project::class)->count(['iso3' => $iso3, 'archived' => 0]);
@@ -271,29 +285,15 @@ class ProjectService
     /**
      * Export all projects of the country in the CSV file
      * @param $countryIso3
+     * @param string $type
      * @return mixed
      */
-    public function exportToCsv($countryIso3) {
+    public function exportToCsv($countryIso3, string $type) {
 
 
         $exportableTable = $this->em->getRepository(Project::class)->getAllOfCountry($countryIso3);
 
-        /*$projectsData = array();
-        foreach ($exportableTable as $value){
-            array_push($projectsData, [
-                "Project name" => $value->getName(),
-                "Start date"=> $value->getStartDate()->format('Y-m-d H:i:s'),
-                "End date" => $value->getEndDate()->format('Y-m-d H:i:s'),
-                "Number of households" => $value->getNumberOfHouseholds(),
-                "Value" => $value->getValue(),
-                "Notes" => $value->getNotes(),
-                "Country" => $value->getIso3(),
-                //"Donors" => $value->getDonors()->getValues(),
-                //"Sectors" => $value->getSectors()->getValues(),
-                "is archived" => $value->getArchived(),
-            ]);
-        }*/
-        return $this->container->get('export_csv_service')->export($exportableTable, 'projects');
+        return $this->container->get('export_csv_service')->export($exportableTable, 'projects', $type);
 
     }
 }

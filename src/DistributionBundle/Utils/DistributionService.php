@@ -92,6 +92,10 @@ class DistributionService
     }
 
 
+    /**
+     * @param DistributionData $distributionData
+     * @return DistributionData
+     */
     public function validateDistribution(DistributionData $distributionData)
     {
         $distributionData->setValidated(true);
@@ -351,12 +355,20 @@ class DistributionService
         return $distributionData;
     }
 
-
-    public function exportToCsv(int $projectId) {
+    /**
+     * @param int $projectId
+     * @param string $type
+     * @return mixed
+     */
+    public function exportToCsv(int $projectId, string $type) {
         $exportableTable = $this->em->getRepository(DistributionData::class)->findBy(['project' => $projectId]);
-        return $this->container->get('export_csv_service')->export($exportableTable,'distributions');
+        return $this->container->get('export_csv_service')->export($exportableTable,'distributions', $type);
     }
-    
+
+    /**
+     * @param string $country
+     * @return int
+     */
     public function countAllBeneficiaries(string $country)
     {
         $count = (int) $this->em->getRepository(DistributionBeneficiary::class)->countAll($country);

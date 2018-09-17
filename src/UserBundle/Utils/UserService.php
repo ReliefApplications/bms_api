@@ -25,6 +25,12 @@ class UserService
     /** @var ContainerInterface $container */
     private $container;
 
+    /**
+     * UserService constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param ValidatorInterface $validator
+     * @param ContainerInterface $container
+     */
     public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -51,6 +57,11 @@ class UserService
         return $this->em->getRepository(User::class)->findOneByUsername($username);
     }
 
+    /**
+     * @param User $user
+     * @param array $userData
+     * @return User
+     */
     public function update(User $user, array $userData)
     {
         $roles = $userData['roles'];
@@ -271,21 +282,14 @@ class UserService
 
     /**
      * Export all users in a CSV file
+     * @param string $type
      * @return mixed
      */
-    public function exportToCsv() {
+    public function exportToCsv(string $type) {
 
         $exportableTable = $this->em->getRepository(User::class)->findAll();
 
-        /*$userData = array();
-        for($i = 0; $i < count($exportableTable); $i++){
-            array_push($userData, [
-                'email' => $exportableTable[$i]->getEmail(),
-                'role' => $exportableTable[$i]->getRoles()[0]
-            ]);
-        }*/
-
-        return $this->container->get('export_csv_service')->export($exportableTable,'users');
+        return $this->container->get('export_csv_service')->export($exportableTable,'users', $type);
 
     }
 }
