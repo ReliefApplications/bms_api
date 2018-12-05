@@ -64,14 +64,6 @@ class User extends BaseUser implements ExportableInterface
      * @Groups({"FullUser"})
      */
     protected $roles;
-    
-    /**
-     * @var Transaction
-     *
-     * @ORM\OneToMany(targetEntity="TransactionBundle\Entity\Transaction", mappedBy="sentBy")
-     * @Groups({"FullUser"})
-     */
-    private $transactions;
 
     public function __construct()
     {
@@ -161,55 +153,6 @@ class User extends BaseUser implements ExportableInterface
     public function getUserProjects()
     {
         return $this->userProjects;
-    }
-    
-    /**
-     * Get the value of Transaction 
-     * 
-     * @return Transaction
-     */
-    public function getTransactions()
-    {
-        return $this->transactions;
-    }
- 
-    /** 
-     * Add a Transaction 
-     * 
-     * @param Transaction transaction
-     * 
-     * @return self
-     */
-    public function addTransaction(Transaction $transaction)
-    {
-        $this->transactions[] = $transaction;
- 
-        return $this;
-    }
-    
-    /**
-     * Remove a Transaction
-     * @param  Transaction $transaction
-     * @return self
-     */
-    public function removeTransaction(Transaction $transaction)
-    {
-        $this->transactions->removeElement($transaction);
-        return $this;
-    }
-    
-    /**
-     * Set transactions
-     *
-     * @param $collection
-     *
-     * @return self
-     */
-    public function setPhones(\Doctrine\Common\Collections\Collection $collection = null)
-    {
-        $this->transactions = $collection;
-
-        return $this;
     }
 
     /**
