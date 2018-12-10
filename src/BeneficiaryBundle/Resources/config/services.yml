@@ -84,6 +84,13 @@ services:
             - "@doctrine.orm.entity_manager"
         public: true
 
+    beneficiary.syr_to_model:
+        class: BeneficiaryBundle\Utils\Mapper\SYRMapper
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@beneficiary.household_export_csv_service"
+        public: true
+
     beneficiary.household_to_csv_mapper:
         class: BeneficiaryBundle\Utils\Mapper\HouseholdToCSVMapper
         arguments:

@@ -17,6 +17,7 @@ use BeneficiaryBundle\Utils\DataVerifier\LevenshteinTypoVerifier;
 use BeneficiaryBundle\Utils\DataVerifier\MoreVerifier;
 use BeneficiaryBundle\Utils\DataVerifier\TypoVerifier;
 use BeneficiaryBundle\Utils\Mapper\CSVToArrayMapper;
+use BeneficiaryBundle\Utils\Mapper\SYRMapper;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Reader\Csv as CsvReader;
 use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
@@ -94,7 +95,13 @@ class HouseholdCSVService
         $worksheet = $reader->load($uploadedFile->getRealPath())->getActiveSheet();
 
         $sheetArray = $worksheet->toArray(null, true, true, true);
-        return $this->transformAndAnalyze($countryIso3, $project, $sheetArray, $step, $token, $email);
+        $mapper = $this->guessMapper($countryIso3);
+        if (null !== $mapper) {
+            $sheetArray = $mapper->mapArray($sheetArray);
+        }
+        dump($sheetArray);
+        return null;
+//        return $this->transformAndAnalyze($countryIso3, $project, $sheetArray, $step, $token, $email);
     }
 
     /**
@@ -110,13 +117,10 @@ class HouseholdCSVService
     public function transformAndAnalyze($countryIso3, Project $project, array $sheetArray, int $step, $token, string $email)
     {
         // Get the list of households from csv with their beneficiaries
-        if (1 === $step)
-        {
+        if (1 === $step) {
             $listHouseholdsArray = $this->CSVToArrayMapper->fromCSVToArray($sheetArray, $countryIso3);
             return $this->foundErrors($countryIso3, $project, $listHouseholdsArray, $step, $token, $email);
-        }
-        else
-        {
+        } else {
             return $this->foundErrors($countryIso3, $project, $sheetArray, $step, $token, $email);
         }
     }
@@ -142,31 +146,26 @@ class HouseholdCSVService
         if ($treatment !== null)
             $treatReturned = $treatment->treat($project, $treatReturned, $email);
 
-        if(array_key_exists("miss", $treatReturned))
+        if (array_key_exists("miss", $treatReturned))
             return "A line is incomplete in the imported file";
 
         /** @var AbstractVerifier $verifier */
         $verifier = $this->guessVerifier($step);
         $return = [];
-        if (null === $verifier)
-        {
+        if (null === $verifier) {
             $this->clearCacheToken($this->token);
             return $treatReturned;
         }
         $cache_id = 1;
         $householdsToSave = [];
-        foreach ($treatReturned as $index => $householdArray)
-        {
+        foreach ($treatReturned as $index => $householdArray) {
             $returnTmp = $verifier->verify($countryIso3, $householdArray, $cache_id, $email);
             // IF there are errors
-            if (null !== $returnTmp && [] !== $returnTmp)
-            {
+            if (null !== $returnTmp && [] !== $returnTmp) {
                 if ($returnTmp !== false)
                     $return[] = $returnTmp;
-            }
-            // If no error we saved the household with a cache id (used to map household between front and back)
-            else
-            {
+            } // If no error we saved the household with a cache id (used to map household between front and back)
+            else {
                 $householdsToSave[$cache_id] = $householdArray;
             }
             $cache_id++;
@@ -179,6 +178,16 @@ class HouseholdCSVService
         return ["data" => $return, "token" => $this->token];
     }
 
+    private function guessMapper($countryIso3)
+    {
+        switch (strtolower($countryIso3)) {
+            case 'syr':
+                return new SYRMapper($this->em, $this->container->get('beneficiary.household_export_csv_service'));
+            default:
+                return null;
+        }
+    }
+
     /**
      * Depends on the step, guess which verifier used
      * @param int $step
@@ -187,11 +196,10 @@ class HouseholdCSVService
      */
     private function guessVerifier(int $step)
     {
-        switch ($step)
-        {
+        switch ($step) {
             // CASE FOUND TYPO ISSUES
             case 1:
-            // return new TypoVerifier($this->em, $this->container, $this->initOrGetToken());
+                // return new TypoVerifier($this->em, $this->container, $this->initOrGetToken());
                 return new LevenshteinTypoVerifier($this->em, $this->container, $this->initOrGetToken());
                 break;
             // CASE FOUND DUPLICATED ISSUES
@@ -224,8 +232,7 @@ class HouseholdCSVService
      */
     private function guessTreatment(int $step)
     {
-        switch ($step)
-        {
+        switch ($step) {
             case 1:
                 return new MissingTreatment($this->em, $this->householdService, $this->beneficiaryService, $this->container, $this->initOrGetToken());
 
@@ -318,12 +325,9 @@ class HouseholdCSVService
         if (!is_dir($dir_var))
             mkdir($dir_var);
         $dir_file = $dir_var . '/timestamp_token';
-        if (is_file($dir_file))
-        {
+        if (is_file($dir_file)) {
             $timestampByToken = json_decode(file_get_contents($dir_file), true);
-        }
-        else
-        {
+        } else {
             $timestampByToken = [];
         }
 
@@ -348,20 +352,15 @@ class HouseholdCSVService
         if (!is_dir($dir_var))
             mkdir($dir_var);
         $dir_file = $dir_var . '/timestamp_token';
-        if (is_file($dir_file))
-        {
+        if (is_file($dir_file)) {
             $timestampByToken = json_decode(file_get_contents($dir_file), true);
-        }
-        else
-        {
+        } else {
             $this->rrmdir($dir_var);
             return;
         }
 
-        foreach ($timestampByToken as $token => $item)
-        {
-            if ((new \DateTime())->getTimestamp() > $item['timestamp'])
-            {
+        foreach ($timestampByToken as $token => $item) {
+            if ((new \DateTime())->getTimestamp() > $item['timestamp']) {
                 $this->rrmdir($dir_var . '/' . $token);
                 unset($timestampByToken[$token]);
             }
@@ -381,12 +380,9 @@ class HouseholdCSVService
         if (!is_dir($dir_var))
             mkdir($dir_var);
         $dir_file = $dir_var . '/timestamp_token';
-        if (is_file($dir_file))
-        {
+        if (is_file($dir_file)) {
             $timestampByToken = json_decode(file_get_contents($dir_file), true);
-        }
-        else
-        {
+        } else {
             $this->rrmdir($dir_var);
             return;
         }
@@ -405,17 +401,12 @@ class HouseholdCSVService
     private function rrmdir($src)
     {
         $dir = opendir($src);
-        while (false !== ($file = readdir($dir)))
-        {
-            if (($file != '.') && ($file != '..'))
-            {
+        while (false !== ($file = readdir($dir))) {
+            if (($file != '.') && ($file != '..')) {
                 $full = $src . '/' . $file;
-                if (is_dir($full))
-                {
+                if (is_dir($full)) {
                     $this->rrmdir($full);
-                }
-                else
-                {
+                } else {
                     unlink($full);
                 }
             }
@@ -433,12 +424,10 @@ class HouseholdCSVService
     private function isIncomplete(array $array)
     {
         $isIncomplete = true;
-        foreach ($array as $key => $value)
-        {
+        foreach ($array as $key => $value) {
             if (is_array($value))
                 $isIncomplete = $this->isIncomplete($value);
-            if (!$isIncomplete || null === $value)
-            {
+            if (!$isIncomplete || null === $value) {
                 return false;
             }
         }

@@ -51,6 +51,7 @@ class CSVToArrayMapper extends AbstractMapper
             // Check if it's a new household or just a new beneficiary in the current row
             if ($formattedHouseholdArray["address_street"] !== null)
             {
+                // If householdArray is not null that means there is a household to save before reassign this variable
                 if (null !== $householdArray)
                 {
                     $listHouseholdArray[] = $householdArray;

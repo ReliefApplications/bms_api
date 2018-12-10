@@ -177,8 +177,9 @@ class BeneficiaryService
         /** @var VulnerabilityCriterion $vulnerabilityCriterion */
         $vulnerabilityCriterion = $this->em->getRepository(VulnerabilityCriterion::class)->find($vulnerabilityCriterionId);
 
-        if (!$vulnerabilityCriterion instanceof VulnerabilityCriterion)
+        if (!$vulnerabilityCriterion instanceof VulnerabilityCriterion) {
             throw new \Exception("This vulnerability doesn't exist.");
+        }
         return $vulnerabilityCriterion;
     }
 
