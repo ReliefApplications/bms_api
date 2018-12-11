@@ -61,8 +61,14 @@ class SYRMapper extends AbstractMapper
     ];
 
     private $ageConstraint = [
-        "AF" => 8,
-        "AI" => 38
+        "AF" => [
+            0,
+            17
+        ],
+        "AI" => [
+            18,
+            59
+        ]
     ];
 
     /** @var ExportCSVService $exportCSVService */
@@ -137,8 +143,7 @@ class SYRMapper extends AbstractMapper
                 $dependent->setDateOfBirth($birthDate)
                     ->setStatus(0);
                 foreach ($this->vulnerabilityCriteriaMap['DEPENDENT'] as $vulnerabilityCriterionName => $position) {
-                    if (is_array($position))
-                    {
+                    if (is_array($position)) {
                         foreach ($position as $subPosition) {
 
                         }
@@ -150,9 +155,24 @@ class SYRMapper extends AbstractMapper
         return $arrayFormatted;
     }
 
-    public function mapBeneficiariesVulnerabilities()
+    public function mapBeneficiariesVulnerabilities($row)
     {
-
+        $mappingVulnerabilities = [];
+        foreach ($this->vulnerabilityCriteriaMap['DEPENDENT'] as $vulnerabilityName => $position) {
+            if (is_array($position)) {
+                foreach ($position as $subPosition) {
+                    if (!array_key_exists($vulnerabilityName, $mappingVulnerabilities)) {
+                        $mappingVulnerabilities[] = 0;
+                    }
+                    $mappingVulnerabilities[$vulnerabilityName]++;
+                }
+            } else {
+                if (!array_key_exists($vulnerabilityName, $mappingVulnerabilities)) {
+                    $mappingVulnerabilities[$vulnerabilityName] = 0;
+                }
+                $mappingVulnerabilities[$vulnerabilityName]++;
+            }
+        }
     }
 
     public function getOrderedBirthDates($row)
