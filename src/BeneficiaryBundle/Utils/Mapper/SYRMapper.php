@@ -62,12 +62,12 @@ class SYRMapper extends AbstractMapper
 
     private $ageConstraint = [
         "AF" => [
-            0,
-            17
+            "min" => 0,
+            "max" => 17
         ],
         "AI" => [
-            18,
-            59
+            "min" => 18,
+            "max" => 59
         ]
     ];
 
@@ -91,23 +91,15 @@ class SYRMapper extends AbstractMapper
      */
     public function mapArray(array $sheetArray)
     {
-        try {
-            $mappingCSV = $this->loadMappingCSVOfCountry($this->ISO3);
-        } catch (\Exception $exception) {
-            dump($exception);
-            throw new \Exception("Error during the loading of the mapping of country SYR");
-        }
         $this->sheetArray = $sheetArray;
-        $arrayFormatted = [];
+        $listHouseholds = [];
 
         $this->mapHeader();
         // We parse the array => One line is one household (the line contains details of head of hh and of every beneficiaries)
         foreach ($sheetArray as $index => $row) {
             if ($index < $this->FIRST_ROW)
                 continue;
-            $houesholdArray = [];
             $orderedBirthDates = $this->getOrderedBirthDates($row);
-            dump($orderedBirthDates);
             // HOUSEHOLD
             $household = new Household();
             $household->setAddressStreet($row[$this->mapping['address_street']]);
@@ -122,6 +114,7 @@ class SYRMapper extends AbstractMapper
             // HEAD OF HOUSEHOLD
             $head = new Beneficiary();
             $head->setStatus(1)
+                ->setHousehold($household)
                 ->setGender($row[$this->mapping['HEAD']['gender']])
                 ->setDateOfBirth(null);
             $nationalIds = new NationalId();
@@ -130,29 +123,101 @@ class SYRMapper extends AbstractMapper
             $head->addNationalId($nationalIds);
             foreach ($this->vulnerabilityCriteriaMap['HEAD'] as $vulnerabilityCriterionName => $position) {
                 if ($vulnerabilityCriterionName === 'custom') {
-                    $vulnerabilityCriterion = new VulnerabilityCriterion($row[$position]);
+                    $nameVulnerability = $row[$position];
                 } else {
-                    $vulnerabilityCriterion = new VulnerabilityCriterion($vulnerabilityCriterionName);
+                    $nameVulnerability = $vulnerabilityCriterionName;
                 }
-                $head->addVulnerabilityCriterion($vulnerabilityCriterion);
+                $vulnerabilityCriterion = $this->em->getRepository(VulnerabilityCriterion::class)
+                    ->findOneByFieldString($nameVulnerability);
+
+                if ($vulnerabilityCriterion instanceof VulnerabilityCriterion) {
+                    $head->addVulnerabilityCriterion($vulnerabilityCriterion);
+                }
             }
+            $household->addBeneficiary($head);
+
 
             // DEPENDENTS
+            $orderedVulnerabilitiesDependent = $this->getOrderedVulnerabilities($row);
             foreach ($orderedBirthDates as $birthDate) {
                 $dependent = new Beneficiary();
                 $dependent->setDateOfBirth($birthDate)
-                    ->setStatus(0);
-                foreach ($this->vulnerabilityCriteriaMap['DEPENDENT'] as $vulnerabilityCriterionName => $position) {
-                    if (is_array($position)) {
-                        foreach ($position as $subPosition) {
+                    ->setStatus(0)
+                    ->setHousehold($household);
+                $currentVulnerabilityMap = $this->getNextVulnerability($orderedVulnerabilitiesDependent, $birthDate);
+                if ($currentVulnerabilityMap !== null) {
+                    $vulnerabilityCriterion = $this->em->getRepository(VulnerabilityCriterion::class)
+                        ->findOneByFieldString($currentVulnerabilityMap["name"]);
 
-                        }
+                    if ($vulnerabilityCriterion instanceof VulnerabilityCriterion) {
+                        $dependent->addVulnerabilityCriterion($vulnerabilityCriterion);
                     }
+                }
+                $household->addBeneficiary($dependent);
+            }
+            $listHouseholds[] = $household;
+        }
+        dump($listHouseholds);
+        return $listHouseholds;
+    }
 
+    private function getNextVulnerability(array &$orderedVulnerabilitiesDependent, \DateTime $birthDate)
+    {
+        foreach ($orderedVulnerabilitiesDependent as $index => $currentVulnerabilityMap) {
+            if (array_key_exists($currentVulnerabilityMap["position"], $this->ageConstraint)) {
+                $age = $this->getAge($birthDate);
+                if (array_key_exists('min', $this->ageConstraint[$currentVulnerabilityMap["position"]])
+                    && $age < $this->ageConstraint[$currentVulnerabilityMap["position"]]['min']) {
+                    next($orderedVulnerabilitiesDependent);
+                    continue;
+                }
+                if (array_key_exists('max', $this->ageConstraint[$currentVulnerabilityMap["position"]])
+                    && $age > $this->ageConstraint[$currentVulnerabilityMap["position"]]['max']) {
+                    next($orderedVulnerabilitiesDependent);
+                    continue;
+                }
+                unset($orderedVulnerabilitiesDependent[$index]);
+                return $currentVulnerabilityMap;
+            }
+        }
+
+        return null;
+    }
+
+    private function getAge(\DateTime $birthDate)
+    {
+        $birthDate = explode("/", $birthDate->format("m/d/Y"));
+        return (date("md", date("U", mktime(0, 0, 0, $birthDate[0], $birthDate[1], $birthDate[2]))) > date("md")
+            ? ((date("Y") - $birthDate[2]) - 1)
+            : (date("Y") - $birthDate[2]));
+    }
+
+    public function getOrderedVulnerabilities($row)
+    {
+        $mappingVulnerabilities = [];
+        foreach ($this->vulnerabilityCriteriaMap['DEPENDENT'] as $vulnerabilityName => $position) {
+            if (is_array($position)) {
+                foreach ($position as $subPosition) {
+                    if (intval($row[$subPosition]) > 0) {
+                        $mappingVulnerabilities[$subPosition] = [
+                            "name" => $vulnerabilityName,
+                            "position" => $subPosition,
+                            "value" => intval($row[$subPosition])
+                        ];
+                    }
+                }
+            } else {
+                if (intval($row[$position]) > 0) {
+                    $mappingVulnerabilities[$position] = [
+                        "name" => $vulnerabilityName,
+                        "position" => $position,
+                        "value" => intval($row[$position])
+                    ];
                 }
             }
         }
-        return $arrayFormatted;
+
+        return $mappingVulnerabilities;
     }
 
     public function mapBeneficiariesVulnerabilities($row)
