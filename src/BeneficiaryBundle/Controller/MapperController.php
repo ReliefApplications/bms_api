@@ -33,7 +33,6 @@ class MapperController extends Controller
 
         // Create binary file to send
         $response = new BinaryFileResponse(getcwd() . '/' . $filename);
-
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
         $mimeTypeGuesser = new FileinfoMimeTypeGuesser();
         if ($mimeTypeGuesser->isSupported()) {

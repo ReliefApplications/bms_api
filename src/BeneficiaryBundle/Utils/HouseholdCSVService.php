@@ -83,15 +83,15 @@ class HouseholdCSVService
     {
         // LOADING FILE
         $reader = IOFactory::createReaderForFile($uploadedFile->getRealPath());
-
         $worksheet = $reader->load($uploadedFile->getRealPath())->getActiveSheet();
-
         $sheetArray = $worksheet->toArray(null, true, true, true);
         $mapper = $this->guessMapper($countryIso3);
+
         $filename = null;
         if (null !== $mapper) {
             $filename = $mapper->mapArray(explode('.', $uploadedFile->getClientOriginalName())[0], $sheetArray);
         }
+
         return $filename;
     }
 
