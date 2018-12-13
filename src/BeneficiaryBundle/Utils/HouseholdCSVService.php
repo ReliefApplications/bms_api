@@ -72,6 +72,29 @@ class HouseholdCSVService
         $this->container = $container;
     }
 
+    /**
+     * @param $countryIso3
+     * @param UploadedFile $uploadedFile
+     * @return array|null
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     */
+    public function mapfile($countryIso3, UploadedFile $uploadedFile)
+    {
+        // LOADING FILE
+        $reader = IOFactory::createReaderForFile($uploadedFile->getRealPath());
+
+        $worksheet = $reader->load($uploadedFile->getRealPath())->getActiveSheet();
+
+        $sheetArray = $worksheet->toArray(null, true, true, true);
+        $mapper = $this->guessMapper($countryIso3);
+        $filename = null;
+        if (null !== $mapper) {
+            $filename = $mapper->mapArray(explode('.', $uploadedFile->getClientOriginalName())[0], $sheetArray);
+        }
+        return $filename;
+    }
+
 
     /**
      * Defined the reader and transform CSV to array
@@ -95,13 +118,8 @@ class HouseholdCSVService
         $worksheet = $reader->load($uploadedFile->getRealPath())->getActiveSheet();
 
         $sheetArray = $worksheet->toArray(null, true, true, true);
-        $mapper = $this->guessMapper($countryIso3);
-        if (null !== $mapper) {
-            $sheetArray = $mapper->mapArray($sheetArray);
-        }
-        dump($sheetArray);
-        return null;
-//        return $this->transformAndAnalyze($countryIso3, $project, $sheetArray, $step, $token, $email);
+
+        return $this->transformAndAnalyze($countryIso3, $project, $sheetArray, $step, $token, $email);
     }
 
     /**
@@ -182,7 +200,11 @@ class HouseholdCSVService
     {
         switch (strtolower($countryIso3)) {
             case 'syr':
-                return new SYRMapper($this->em, $this->container->get('beneficiary.household_export_csv_service'));
+                return new SYRMapper(
+                    $this->em,
+                    $this->container->get('beneficiary.household_to_csv_mapper'),
+                    $this->container->get('beneficiary.household_export_csv_service')
+                );
             default:
                 return null;
         }

@@ -117,6 +117,9 @@ class LocationService
     public function getAdm1(Household $household)
     {
         $location = $household->getLocation();
+        if ($location === null) {
+            return null;
+        }
         if (null !== $location->getAdm1())
         {
             return $location->getAdm1()->getName();
@@ -147,6 +150,9 @@ class LocationService
     public function getAdm2(Household $household)
     {
         $location = $household->getLocation();
+        if ($location === null) {
+            return null;
+        }
         if (null !== $location->getAdm2())
         {
             return $location->getAdm2()->getName();
@@ -173,6 +179,9 @@ class LocationService
     public function getAdm3(Household $household)
     {
         $location = $household->getLocation();
+        if ($location === null) {
+            return null;
+        }
         if (null !== $location->getAdm3())
         {
             return $location->getAdm3()->getName();
@@ -195,6 +204,9 @@ class LocationService
     public function getAdm4(Household $household)
     {
         $location = $household->getLocation();
+        if ($location === null) {
+            return null;
+        }
         if (null !== $location->getAdm4())
         {
             return $location->getAdm4()->getName();
@@ -256,7 +268,7 @@ class LocationService
     public function getCodeOfUpcomingDistribution(string $countryIso3) {
         $distributions = $this->em->getRepository(DistributionData::class)->findAll();
         $response = [];
-        
+
 
         $date = new \Datetime();
 
@@ -266,25 +278,25 @@ class LocationService
 
                 $location = $this->em->getRepository(Location::class)->findOneBy(["id" =>$distribution->getLocation()->getId()]);
 
-                if($location->getAdm1()) 
+                if($location->getAdm1())
                 {
                     $adm = "adm1";
                     $location_name = $location->getAdm1()->getName();
                     $code = $location->getAdm1()->getCode();
                 }
-                elseif ($location->getAdm2()) 
+                elseif ($location->getAdm2())
                 {
                     $adm = "adm2";
                     $location_name = $location->getAdm2()->getName();
                     $code = $location->getAdm2()->getCode();
                 }
-                elseif ($location->getAdm3()) 
+                elseif ($location->getAdm3())
                 {
                     $adm = "adm3";
                     $location_name = $location->getAdm3()->getName();
                     $code = $location->getAdm3()->getCode();
                 }
-                elseif ($location->getAdm4()) 
+                elseif ($location->getAdm4())
                 {
                     $adm = "adm4";
                     $location_name = $location->getAdm4()->getName();
@@ -294,8 +306,8 @@ class LocationService
                 if(sizeof($response) === 0) {
                     $data = [
                         "code_location" => $code,
-                        "adm_level" => $adm, 
-                        "distribution" => []                      
+                        "adm_level" => $adm,
+                        "distribution" => []
                     ];
                     $upcomingDistribution = [
                         "name" => $distribution->getName(),
@@ -316,27 +328,27 @@ class LocationService
                             ];
                             $upcomingDistributionFind = true;
                             array_push($data['distribution'], $upcomingDistribution);
-                        } 
+                        }
                     }
                     if(!$upcomingDistributionFind) {
                         $data = [
                             "code_location" => $code,
-                            "adm_level" => $adm, 
-                            "distribution" => []                      
+                            "adm_level" => $adm,
+                            "distribution" => []
                         ];
                         $upcomingDistribution = [
                             "name" => $distribution->getName(),
                             "date" => $distribution->getDateDistribution(),
                             "project_name" => $distribution->getProject()->getName(),
-                            
+
                             "location_name" => $location_name,
                         ];
                         array_push($data['distribution'], $upcomingDistribution);
                         array_push($response, $data);
                     }
                 }
-                
-            } 
+
+            }
         }
 
         return $response;
