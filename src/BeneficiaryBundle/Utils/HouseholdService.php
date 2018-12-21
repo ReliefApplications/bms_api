@@ -96,11 +96,15 @@ class HouseholdService
         $filter = $filters['filter'];
         $sort = $filters['sort'];
 
-        $limitMinimum = $pageIndex * $pageSize;
+        if($pageSize === 0) {
+            $households = $this->em->getRepository(Household::class)->findBy([]);
+        } else {
+            $limitMinimum = $pageIndex * $pageSize;
 
-        $households = $this->em->getRepository(Household::class)->getAllBy($iso3, $limitMinimum, $pageSize, $sort, $filter);
-        $length = $households[0];
-        $households = $households[1];
+            $households = $this->em->getRepository(Household::class)->getAllBy($iso3, $limitMinimum, $pageSize, $sort, $filter);
+            $length = $households[0];
+            $households = $households[1];
+        }
         /** @var Household $household */
         foreach ($households as $household) {
             $numberDependents = 0;
@@ -113,7 +117,7 @@ class HouseholdService
             }
             $household->setNumberDependents($numberDependents);
         }
-        return [$length, $households];
+        return $pageSize > 0? [$length, $households] : $households;
     }
 
     /**
