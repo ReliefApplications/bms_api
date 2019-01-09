@@ -340,8 +340,6 @@ class HouseholdService
         }
 
         $this->em->flush();
-        dump($householdArray["beneficiaries"]);
-
         return $household;
     }
 

@@ -130,6 +130,43 @@ class HouseholdCSVService
      * @param string $email
      * @return array|bool
      * @throws \Exception
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function leave(Project $project, array $treatReturned, int $step, $token, string $email)
+    {
+        $this->clearData();
+        $this->token = $token;
+
+        // If there is a treatment class for this step, call it
+        $treatment = new LessTreatment($this->em, $this->householdService, $this->beneficiaryService, $this->container, $this->initOrGetToken());
+        if ($treatment !== null)
+            $treatReturned = $treatment->treat($project, $treatReturned, $email);
+
+        $cache_id = 1;
+        $householdsToSave = [];
+        foreach ($treatReturned as $index => $householdArray)
+        {
+            $householdsToSave[$cache_id] = $householdArray;
+            $cache_id++;
+            unset($treatReturned[$index]);
+        }
+
+        $this->saveInCache($step, json_encode($householdsToSave));
+        unset($householdsToSave);
+        $this->setTimeExpiry();
+        return ['saved'];
+    }
+
+
+    /**
+     * @param $countryIso3
+     * @param Project $project
+     * @param array $treatReturned
+     * @param int $step
+     * @param $token
+     * @param string $email
+     * @return array|bool
+     * @throws \Exception
      */
     public function foundErrors($countryIso3, Project $project, array $treatReturned, int $step, $token, string $email)
     {

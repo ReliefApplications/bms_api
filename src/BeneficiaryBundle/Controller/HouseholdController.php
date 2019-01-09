@@ -266,6 +266,7 @@ class HouseholdController extends Controller
      * @param Request $request
      * @param Project $project
      * @return Response
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function importAction(Request $request, Project $project)
     {
@@ -300,13 +301,27 @@ class HouseholdController extends Controller
         }
         else
         {
-            try
-            {
-                $return = $householdService->foundErrors($countryIso3, $project, $contentJson, $step, $token, $email);
+            if ($request->query->has('leave')) {
+                try
+                {
+                    dump("test");
+                    $return = $householdService->leave($project, $contentJson, $step, $token, $email);
+                }
+                catch (\Exception $e)
+                {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
             }
-            catch (\Exception $e)
-            {
-                return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            else {
+                try
+                {
+                    dump("test2");
+                    $return = $householdService->foundErrors($countryIso3, $project, $contentJson, $step, $token, $email);
+                }
+                catch (\Exception $e)
+                {
+                    return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
             }
         }
 
