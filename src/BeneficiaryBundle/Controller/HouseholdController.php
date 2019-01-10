@@ -266,7 +266,6 @@ class HouseholdController extends Controller
      * @param Request $request
      * @param Project $project
      * @return Response
-     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function importAction(Request $request, Project $project)
     {
@@ -304,7 +303,7 @@ class HouseholdController extends Controller
             if ($request->query->has('leave')) {
                 try
                 {
-                    $return = $householdService->leave($project, $contentJson, $step, $token, $email);
+                    $return = $householdService->leave();
                 }
                 catch (\Exception $e)
                 {

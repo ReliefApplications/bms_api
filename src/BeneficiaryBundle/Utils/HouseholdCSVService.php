@@ -22,6 +22,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Csv as CsvReader;
 use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
 use PhpOffice\PhpSpreadsheet\Reader\Ods as OdsReader;
 use ProjectBundle\Entity\Project;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -122,38 +123,16 @@ class HouseholdCSVService
     }
 
     /**
-     * @param $countryIso3
-     * @param Project $project
-     * @param array $treatReturned
-     * @param int $step
-     * @param $token
-     * @param string $email
      * @return array|bool
      * @throws \Exception
-     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function leave(Project $project, array $treatReturned, int $step, $token, string $email)
+    public function leave()
     {
         $this->clearData();
-        $this->token = $token;
 
-        // If there is a treatment class for this step, call it
-        $treatment = new LessTreatment($this->em, $this->householdService, $this->beneficiaryService, $this->container, $this->initOrGetToken());
-        if ($treatment !== null)
-            $treatReturned = $treatment->treat($project, $treatReturned, $email);
+        $cache = new FilesystemCache();
+        $cache->clear();
 
-        $cache_id = 1;
-        $householdsToSave = [];
-        foreach ($treatReturned as $index => $householdArray)
-        {
-            $householdsToSave[$cache_id] = $householdArray;
-            $cache_id++;
-            unset($treatReturned[$index]);
-        }
-
-        $this->saveInCache($step, json_encode($householdsToSave));
-        unset($householdsToSave);
-        $this->setTimeExpiry();
         return ['saved'];
     }
 
@@ -329,7 +308,6 @@ class HouseholdCSVService
     /**
      * @param int $step
      * @param $dataToSave
-     * @param string $email
      * @throws \Exception
      */
     private function saveInCache(int $step, $dataToSave)
