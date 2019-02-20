@@ -84,7 +84,7 @@ class BookletService
           ->setStatus(0)
           ->setArchived(0);
 
-        if ($bookletData['password']) {
+        if (array_key_exists('password', $bookletData) && $bookletData['password'] !== null) {
           $booklet->setPassword($bookletData['password']);
         }
 
