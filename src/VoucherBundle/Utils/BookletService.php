@@ -84,6 +84,10 @@ class BookletService
           ->setStatus(0)
           ->setArchived(0);
 
+        if ($bookletData['password']) {
+          $booklet->setPassword($bookletData['password']);
+        }
+
         $this->em->merge($booklet);
         $this->em->flush();
 
