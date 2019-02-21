@@ -14,6 +14,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VoucherBundle\Entity\Voucher;
 use VoucherBundle\Entity\Booklet;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
  * Class VoucherController
@@ -228,5 +233,159 @@ class VoucherController extends Controller
         }
         
         return new Response(json_encode($isSuccess));
+    }
+
+     /**
+     * To print a voucher
+     *
+     * @Rest\Get("/vouchers/print/{id}", name="print_voucher")
+     * @SWG\Tag(name="Vouchers")
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="SUCCESS",
+     * )
+     *
+     * @SWG\Response(
+     *     response=400,
+     *     description="BAD_REQUEST"
+     * )
+     *
+     * @param Voucher $voucher
+     * @return Response
+     */
+    public function printVoucherAction(Voucher $voucher)
+    {
+        $vouchers = [$voucher, $voucher, $voucher, $voucher];
+        $initialVoucher = $vouchers[0];
+        try {
+            // $printed = $voucher->getPrinted();
+            $printed = false;
+        
+            if ($printed === false) {
+                return $this->printVouchersAction([$voucher]);
+            } else {
+                // Do else
+            }
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    /**
+     * To print all vouchers
+     *
+     * @Rest\Get("/print-vouchers", name="print_vouchers")
+     * @SWG\Tag(name="Vouchers")
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="SUCCESS",
+     * )
+     *
+     * @SWG\Response(
+     *     response=400,
+     *     description="BAD_REQUEST"
+     * )
+     *
+     * @return Response
+     */
+    public function printAllVouchersAction()
+    {
+        $vouchers = $this->get('voucher.voucher_service')->findAll(); // Has to be replaced by findNotPrinted()
+        return $this->printVouchersAction($vouchers);
+    }
+
+    public function printVouchersAction(array $vouchers)
+    {
+        $initialVoucher = $vouchers[0];
+
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $pdfOptions->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($pdfOptions);
+
+
+        try {
+            // $printed = $voucher->getPrinted();
+            $printed = false;
+        
+            if ($printed === false) {
+                // $initialVoucher->setPrinted(true);
+                // $this->em->merge($voucher);
+                // $this->em->flush();
+
+                $name = $initialVoucher->getBooklet()->getDistributionBeneficiary()->getBeneficiary()->getFamilyName();
+                $currency = $initialVoucher->getBooklet()->getCurrency();
+                $qrCode = $initialVoucher->getCode();
+
+                $html = $this->renderView(
+                '@Voucher/Pdf/voucher.html.twig',
+                    array(
+                        'name'  => $name,
+                        'value' => $initialVoucher->getValue(),
+                        'currency' => $currency,
+                        'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $qrCode
+                    )
+                );
+
+                foreach($vouchers as $otherVoucher) {
+                    if ($otherVoucher !== $initialVoucher) {
+
+                        // $otherVoucher->setPrinted(true);
+                        // $this->em->merge($voucher);
+                        // $this->em->flush();
+
+                        $name = $otherVoucher->getBooklet()->getDistributionBeneficiary()->getBeneficiary()->getFamilyName();
+                        $currency = $otherVoucher->getBooklet()->getCurrency();
+                        $qrCode = $otherVoucher->getCode();
+                        
+                        $otherHtml = $this->renderView(
+                            '@Voucher/Pdf/other-voucher.html.twig',
+                                array(
+                                    'name'  => $name,
+                                    'value' => $otherVoucher->getValue(),
+                                    'currency' => $currency,
+                                    'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $qrCode
+                                )
+                        );
+                        $pos = strrpos($html, '<p style="page-break-before: always">');
+                        $html = substr_replace($html, $otherHtml, $pos, strlen('<p style="page-break-before: always">'));
+                    }
+                }
+
+                $pos = strrpos($html, '<p style="page-break-before: always">');
+                $html = substr_replace($html, '', $pos, strlen('<p style="page-break-before: always">'));
+
+                $dompdf->loadHtml($html);
+        
+                // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+                $dompdf->setPaper('A4', 'portrait');
+        
+                // Render the HTML as PDF
+                $dompdf->render();
+        
+                // Store PDF Binary Data
+                $output = $dompdf->output();
+                
+                // e.g /var/www/project/public/mypdf.pdf
+                $pdfFilepath =  getcwd() . '/otherpdf.pdf';
+                
+                // Write file to the desired path
+                file_put_contents($pdfFilepath, $output);
+
+                $response = new BinaryFileResponse($pdfFilepath);
+
+                $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'mypdf.pdf');
+                $response->headers->set('Content-Type', 'application/pdf');
+                $response->deleteFileAfterSend(true);
+
+                return $response;
+            } else {
+                // Do else
+            }
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
     }
 }
