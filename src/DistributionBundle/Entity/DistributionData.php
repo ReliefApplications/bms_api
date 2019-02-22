@@ -202,7 +202,7 @@ class DistributionData implements ExportableInterface
      */
     public function setUpdatedOn($updatedOn)
     {
-        $this->updatedOn = date('Y-m-d H:m:i', strtotime($updatedOn["updated_on"]));
+        $this->updatedOn = $updatedOn;
 
         return $this;
     }
