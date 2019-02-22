@@ -439,7 +439,7 @@ class BookletController extends Controller
 
             foreach($booklets as $booklet) {
                 if ($booklet !== $booklets[0]) {
-                    $bookletHtml = $this->getPdfHtml($booklet);
+                    $bookletHtml = $this->getPdfHtml($booklet, $voucherHtmlSeparation);
                     preg_match('/<main>([\s\S]*)<\/main>/', $bookletHtml, $matches);
                     $bookletInnerHtml = '<p style="page-break-before: always">' . $matches[1];
                     $pos = strrpos($html, $voucherHtmlSeparation);

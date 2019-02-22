@@ -123,7 +123,7 @@ class BookletService
    */
   public function generateCode(array $bookletData, int $currentBatch, int $bookletBatch)
   {
-    // === randomCode#bookletBatchNumber-lastBatchNumber-currentBooklet ===
+    // === randomCode*bookletBatchNumber-lastBatchNumber-currentBooklet ===
     $lastBatchNumber = sprintf("%03d", $bookletBatch + ($bookletData['number_booklets'] - 1));
     $currentBooklet = sprintf("%03d", $currentBatch);
 
@@ -133,7 +133,7 @@ class BookletService
       $bookletBatchNumber = "000";
     }
 
-    // === generates randomCode before # ===
+    // === generates randomCode before * ===
     $rand = '';
     $seed = str_split('abcdefghijklmnopqrstuvwxyz'
       . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -142,7 +142,7 @@ class BookletService
     foreach (array_rand($seed, 5) as $k) $rand .= $seed[$k];
     
     // === joins all parts together ===
-    $fullCode = $rand . '#' . $bookletBatchNumber . '-' . $lastBatchNumber . '-' . $currentBooklet;
+    $fullCode = $rand . '*' . $bookletBatchNumber . '-' . $lastBatchNumber . '-' . $currentBooklet;
     return $fullCode;
   }
 
