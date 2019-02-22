@@ -167,6 +167,16 @@ class BookletService
     return  $this->em->getRepository(Booklet::class)->findBy(['archived' => true]);
   }
 
+  /**
+   * Get a booklet from the database
+   *
+   * @return Booklet
+   */
+  public function findOne($id)
+  {
+    return  $this->em->getRepository(Booklet::class)->find($id);
+  }
+
 
 
   /**

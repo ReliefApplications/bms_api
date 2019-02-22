@@ -365,7 +365,7 @@ class BookletController extends Controller
     /**
      * To print a batch of booklets
      *
-     * @Rest\Get("/booklets-print", name="print_booklets")
+     * @Rest\Post("/booklets-print", name="print_booklets")
      * @SWG\Tag(name="Booklets")
      *
      * @SWG\Response(
@@ -383,13 +383,18 @@ class BookletController extends Controller
      */
     public function printBookletsAction(Request $request)
     {
-        $bookletIds = $request->request->all();
+        $bookletData = $request->request->all();
+        $bookletIds = $bookletData['bookletIds'];
+        $booklets = [];
         foreach ($bookletIds as $bookletId) {
-            try {
-                return $this->printBookletAction([$booklet]);
-            } catch (\Exception $exception) {
-                return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
-            }
+            $booklet = $this->get('voucher.booklet_service')->findOne($bookletId);
+            $booklets[] = $booklet;
+        }
+
+        try {
+            return $this->generatePdf($booklets);
+        } catch (\Exception $exception) {
+            return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -414,63 +419,35 @@ class BookletController extends Controller
      */
     public function printBookletAction(Booklet $booklet)
     {
+        try {
+            return $this->generatePdf([$booklet]);;
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    public function generatePdf(array $booklets)
+    {
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         $pdfOptions->set('isRemoteEnabled', true);
         $dompdf = new Dompdf($pdfOptions);
 
-
         try {
-            $name = $booklet->getDistributionBeneficiary()->getBeneficiary()->getFamilyName();
-            $currency = $booklet->getCurrency();
-            $bookletQrCode = $booklet->getCode();
-            $vouchers = $booklet->getVouchers();
-            $totalValue = 0;
-            $numberVouchers = $booklet->getNumberVouchers();
-            
-            foreach ($vouchers as $voucher) {
-                $totalValue += $voucher->getValue();
-            }
+            $voucherHtmlSeparation = '<p class="next-voucher"></p>';
+            $html = $this->getPdfHtml($booklets[0], $voucherHtmlSeparation);
 
-            $bookletHtml = $this->renderView(
-            '@Voucher/Pdf/booklet.html.twig',
-                array(
-                    'name'  => $name,
-                    'value' => $totalValue,
-                    'currency' => $currency,
-                    'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $bookletQrCode,
-                    'numberVouchers' => $numberVouchers
-                )
-            );
-
-            $pageBreak = true;
-
-            foreach($vouchers as $voucher) {
-                $voucherQrCode = $voucher->getCode();
-                
-                $voucherHtml = $this->renderView(
-                    '@Voucher/Pdf/voucher.html.twig',
-                        array(
-                            'name'  => $name,
-                            'value' => $voucher->getValue(),
-                            'currency' => $currency,
-                            'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=' . $voucherQrCode
-                        )
-                );
-
-                if ($pageBreak === true) {
-                    $voucherHtml = '<p style="page-break-before: always">' . $voucherHtml;
-                } else {
-                    $voucherHtml = '<hr style="margin-top: 30px;">' . $voucherHtml;
+            foreach($booklets as $booklet) {
+                if ($booklet !== $booklets[0]) {
+                    $bookletHtml = $this->getPdfHtml($booklet);
+                    preg_match('/<main>([\s\S]*)<\/main>/', $bookletHtml, $matches);
+                    $bookletInnerHtml = '<p style="page-break-before: always">' . $matches[1];
+                    $pos = strrpos($html, $voucherHtmlSeparation);
+                    $html = substr_replace($html, $bookletInnerHtml, $pos, strlen($voucherHtmlSeparation));
                 }
-
-                $pageBreak = !$pageBreak;
-
-                $pos = strrpos($bookletHtml, '<p class="next-voucher"></p>');
-                $bookletHtml = substr_replace($bookletHtml, $voucherHtml, $pos, strlen('<p class="next-voucher"></p>'));
             }
 
-            $dompdf->loadHtml($bookletHtml);
+            $dompdf->loadHtml($html);
             $dompdf->setPaper('A4', 'portrait');
             $dompdf->render();
             $output = $dompdf->output();
@@ -487,6 +464,60 @@ class BookletController extends Controller
         } catch (\Exception $e) {
             throw new \Exception($e);
         }
+    }
+
+    public function getPdfHtml(Booklet $booklet, string $voucherHtmlSeparation)
+    {
+        $name = $booklet->getDistributionBeneficiary()->getBeneficiary()->getFamilyName();
+        $currency = $booklet->getCurrency();
+        $bookletQrCode = $booklet->getCode();
+        $vouchers = $booklet->getVouchers();
+        $totalValue = 0;
+        $numberVouchers = $booklet->getNumberVouchers();
+        
+        foreach ($vouchers as $voucher) {
+            $totalValue += $voucher->getValue();
+        }
+
+        $bookletHtml = $this->renderView(
+        '@Voucher/Pdf/booklet.html.twig',
+            array(
+                'name'  => $name,
+                'value' => $totalValue,
+                'currency' => $currency,
+                'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $bookletQrCode,
+                'numberVouchers' => $numberVouchers
+            )
+        );
+
+        $pageBreak = true;
+
+        foreach($vouchers as $voucher) {
+            $voucherQrCode = $voucher->getCode();
+            
+            $voucherHtml = $this->renderView(
+                '@Voucher/Pdf/voucher.html.twig',
+                    array(
+                        'name'  => $name,
+                        'value' => $voucher->getValue(),
+                        'currency' => $currency,
+                        'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=' . $voucherQrCode
+                    )
+            );
+
+            if ($pageBreak === true) {
+                $voucherHtml = '<p style="page-break-before: always">' . $voucherHtml;
+            } else {
+                $voucherHtml = '<hr style="margin-top: 30px;">' . $voucherHtml;
+            }
+
+            $pageBreak = !$pageBreak;
+
+            $pos = strrpos($bookletHtml, $voucherHtmlSeparation);
+            $bookletHtml = substr_replace($bookletHtml, $voucherHtml, $pos, strlen($voucherHtmlSeparation));
+        }
+
+        return $bookletHtml;
     }
 
 }

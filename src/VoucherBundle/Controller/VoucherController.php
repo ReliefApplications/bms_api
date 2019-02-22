@@ -14,11 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VoucherBundle\Entity\Voucher;
 use VoucherBundle\Entity\Booklet;
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
  * Class VoucherController
