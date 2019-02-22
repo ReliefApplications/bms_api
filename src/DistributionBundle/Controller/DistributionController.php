@@ -377,7 +377,7 @@ class DistributionController extends Controller
     public function updateAction(Request $request, DistributionData $DistributionData)
     {
         $distributionArray = $request->request->all();
-        
+
         $distributionArray["updated_on"] = date('Y-m-d H:m:i', strtotime($distributionArray["updated_on"]));
         $distributionArray["project"]["start_date"] = date('Y-m-d', strtotime($distributionArray["project"]["start_date"]));
         $distributionArray["project"]["end_date"] = date('Y-m-d', strtotime($distributionArray["project"]["end_date"]));
