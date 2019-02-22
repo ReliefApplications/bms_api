@@ -197,7 +197,7 @@ class Project implements ExportableInterface
      */
     public function setStartDate($startDate)
     {
-        $this->startDate = $startDate;
+        $this->startDate = date('Y-m-d', strtotime($startDate));
 
         return $this;
     }
@@ -221,7 +221,7 @@ class Project implements ExportableInterface
      */
     public function setEndDate($endDate)
     {
-        $this->endDate = $endDate;
+        $this->endDate = date('Y-m-d', strtotime($endDate));
 
         return $this;
     }
