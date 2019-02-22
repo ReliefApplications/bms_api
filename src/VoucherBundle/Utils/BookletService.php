@@ -84,7 +84,7 @@ class BookletService
           ->setStatus(0)
           ->setArchived(0);
 
-        if (array_key_exists('password', $bookletData) && $bookletData['password'] !== null) {
+        if (array_key_exists('password', $bookletData) && !empty($bookletData['password'])) {
           $booklet->setPassword($bookletData['password']);
         }
 
@@ -146,7 +146,7 @@ class BookletService
     foreach (array_rand($seed, 5) as $k) $rand .= $seed[$k];
     
     // === joins all parts together ===
-    $fullCode = $rand . '#' . $bookletBatchNumber . '-' . $lastBatchNumber . '-' . $currentBooklet;
+    $fullCode = $rand . '*' . $bookletBatchNumber . '-' . $lastBatchNumber . '-' . $currentBooklet;
     return $fullCode;
   }
 
@@ -187,12 +187,25 @@ class BookletService
     try {
 
         $booklet->setCurrency($bookletData['currency']);
+        if (array_key_exists('password', $bookletData) && !empty($bookletData['password'])) {
+          $booklet->setPassword($bookletData['password']);
+        }
         $this->em->merge($booklet);
 
         $vouchers = $this->em->getRepository(Voucher::class)->findBy(['booklet' => $booklet->getId()]);
         /** @var $voucher Voucher */
         foreach ($vouchers as $voucher) {
             $voucher->setValue($bookletData['individual_value']);
+            if (array_key_exists('password', $bookletData) && !empty($bookletData['password'])) {
+              $qrCode = $voucher->getCode();
+              preg_match('/^[A-Z]+\d+\*[\d]..-[\d]..-[\d]..-[\da-z]+-([\da-zA-Z=\/]+)$/i', $qrCode, $matches);
+              if ($matches === null || count($matches) < 1) {
+                $qrCode .= '-' . $bookletData['password'];
+              } else {
+                $qrCode = str_replace($matches[1], $bookletData['password'], $qrCode);
+              }
+              $voucher->setCode($qrCode);
+            }
             $this->em->merge($voucher);
         }
 

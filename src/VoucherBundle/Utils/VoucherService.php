@@ -97,14 +97,14 @@ class VoucherService
    */
   public function generateCode(array $voucherData, int $voucherId)
   {
-    // CREATE VOUCHER CODE #BookletBatchNumber-lastBatchNumber-BookletId-VoucherId
-    $parts = explode("#", $voucherData['bookletCode']);
+    // CREATE VOUCHER CODE *BookletBatchNumber-lastBatchNumber-BookletId-VoucherId
+    $parts = explode("*", $voucherData['bookletCode']);
     $currentVoucher = sprintf("%03d", $voucherId);
     $value = $voucherData['value'];
     $currency = $voucherData['currency'];
     $booklet = $this->em->getRepository(Booklet::class)->find($voucherData['bookletID']);
   
-    $fullCode = $currency . $value . '#' . $parts[1] . '-' . $currentVoucher;
+    $fullCode = $currency . $value . '*' . $parts[1] . '-' . $currentVoucher;
     $fullCode = $booklet->password ? $fullCode . '-' . $booklet->password : $fullCode;
     return $fullCode;
   }
