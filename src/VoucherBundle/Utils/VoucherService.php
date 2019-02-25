@@ -102,8 +102,10 @@ class VoucherService
     $currentVoucher = sprintf("%03d", $voucherId);
     $value = $voucherData['value'];
     $currency = $voucherData['currency'];
-
+    $booklet = $this->em->getRepository(Booklet::class)->find($voucherData['bookletID']);
+  
     $fullCode = $currency . $value . '*' . $parts[1] . '-' . $currentVoucher;
+    $fullCode = $booklet->password ? $fullCode . '-' . $booklet->password : $fullCode;
     return $fullCode;
   }
 
@@ -129,6 +131,9 @@ class VoucherService
     try {
       $voucher = $this->em->getRepository(Voucher::class)->find($voucherData['id']);
       $vendor = $this->em->getRepository(Vendor::class)->find($voucherData['vendorId']);
+      if ($voucher->getUsedAt() !== null) {
+        return $voucher;
+      }
       $voucher->setVendor($vendor)
         ->setUsedAt(new \DateTime($voucherData['used_at']));
 

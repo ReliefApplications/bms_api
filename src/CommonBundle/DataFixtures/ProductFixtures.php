@@ -13,10 +13,18 @@ class ProductFixtures extends Fixture
 {
 
     private $data = [
-        ['pear', 'KG', '', 0],
-        ['rice', 'KG', '', 0],
-        ['toothpaste', 'Unit', '', 0],
-        ['apple', 'KG', '', 0]
+        ['soap', 'Unit', '../../assets/imgs/soap.jpg', 0],
+        ['toothbrush', 'Unit', '../../assets/imgs/toothbrush.jpg', 0],
+        ['pear', 'KG', '../../assets/imgs/pear.jpg', 0],
+        ['rice', 'KG', '../../assets/imgs/rice.jpg', 0],
+        ['flour', 'KG', '../../assets/imgs/flour.jpg', 0],
+        ['toothpaste', 'Unit', '../../assets/imgs/toothpaste.jpg', 0],
+        ['apple', 'KG', '../../assets/imgs/apples.jpeg', 0],
+        ['hair brush', 'Unit', '../../assets/imgs/hairbrush.jpg', 0],
+        ['cherry', 'KG', '../../assets/imgs/cherries.jpg', 0],
+        ['book', 'Unit', '../../assets/imgs/book.png', 0],
+        ['cake', 'Unit', '../../assets/imgs/cake.jpg', 0],
+
     ];
 
     /**
