@@ -127,7 +127,7 @@ class BookletService
    */
   public function generateCode(array $bookletData, int $currentBatch, int $bookletBatch)
   {
-    // === randomCode#bookletBatchNumber-lastBatchNumber-currentBooklet ===
+    // === randomCode*bookletBatchNumber-lastBatchNumber-currentBooklet ===
     $lastBatchNumber = sprintf("%03d", $bookletBatch + ($bookletData['number_booklets'] - 1));
     $currentBooklet = sprintf("%03d", $currentBatch);
 
@@ -137,7 +137,7 @@ class BookletService
       $bookletBatchNumber = "000";
     }
 
-    // === generates randomCode before # ===
+    // === generates randomCode before * ===
     $rand = '';
     $seed = str_split('abcdefghijklmnopqrstuvwxyz'
       . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -169,6 +169,16 @@ class BookletService
   public function findDeactivated()
   {
     return  $this->em->getRepository(Booklet::class)->findBy(['archived' => true]);
+  }
+
+  /**
+   * Get a booklet from the database
+   *
+   * @return Booklet
+   */
+  public function findOne($id)
+  {
+    return  $this->em->getRepository(Booklet::class)->find($id);
   }
 
 

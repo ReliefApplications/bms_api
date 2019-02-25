@@ -97,7 +97,7 @@ class VoucherService
    */
   public function generateCode(array $voucherData, int $voucherId)
   {
-    // CREATE VOUCHER CODE *BookletBatchNumber-lastBatchNumber-BookletId-VoucherId
+    // CREATE VOUCHER CODE CurrencyValue*BookletBatchNumber-lastBatchNumber-BookletId-VoucherId
     $parts = explode("*", $voucherData['bookletCode']);
     $currentVoucher = sprintf("%03d", $voucherId);
     $value = $voucherData['value'];

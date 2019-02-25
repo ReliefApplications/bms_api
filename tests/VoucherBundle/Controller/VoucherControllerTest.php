@@ -26,7 +26,7 @@ class VoucherControllerTest extends BMSServiceTestCase
         $randomBookletCode = join('-', [rand(0, 999), rand(0, 999), rand(0, 999)]);
         $this->booklet = new Booklet();
         $this->booklet
-            ->setCode('test#' . $randomBookletCode)
+            ->setCode('test*' . $randomBookletCode)
             ->setArchived(0)
             ->setNumberVouchers(0)
             ->setStatus(0)
