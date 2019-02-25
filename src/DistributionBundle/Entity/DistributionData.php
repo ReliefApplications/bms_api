@@ -323,8 +323,8 @@ class DistributionData implements ExportableInterface
     public function setProject(\ProjectBundle\Entity\Project $project = null)
     {
         if ($project) {
-            $project["start_date"] = date('Y-m-d', strtotime(project["start_date"]));
-            $project["end_date"] = date('Y-m-d', strtotime(project["end_date"]));
+            $project["start_date"] = date('Y-m-d', strtotime($project["start_date"]));
+            $project["end_date"] = date('Y-m-d', strtotime($project["end_date"]));
         }
         $this->project = $project;
 
