@@ -75,6 +75,7 @@ services:
         arguments:
             - "@fos_user.user_manager"
             - "@security.encoder_factory"
+            - "@kernel"
         tags:
             - { name: doctrine.fixture.orm }
 
@@ -102,6 +103,19 @@ services:
             - "@distribution.distribution_service"
         tags:
             - { name: doctrine.fixture.orm }
+
+    CommonBundle\DataFixtures\ProductFixtures:
+        arguments:
+            - "@kernel"
+        tags:
+            - { name: doctrine.fixture.orm }
+
+    CommonBundle\DataFixtures\VendorFixtures:
+        arguments:
+            - "@kernel"
+        tags:
+            - { name: doctrine.fixture.orm }
+
 
 
 #######################################################################################

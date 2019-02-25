@@ -153,6 +153,7 @@ class BeneficiaryService
             ->setFamilyName($beneficiaryArray["family_name"])
             ->setGivenName($beneficiaryArray["given_name"])
             ->setStatus($beneficiaryArray["status"])
+            ->setResidencyStatus($beneficiaryArray["residency_status"])
             ->setUpdatedOn(new \DateTime());
 
         $errors = $this->validator->validate($beneficiary);
@@ -175,7 +176,7 @@ class BeneficiaryService
         }
         foreach ($beneficiaryArray["phones"] as $phoneArray)
         {
-            if (!empty($phoneArray[0])) {
+            if (!empty($phoneArray["type"]) && !empty($phoneArray["proxy"]) && !empty($phoneArray["prefix"]) && !empty($phoneArray["number"])) {
                 $phone = $this->getOrSavePhone($beneficiary, $phoneArray, false);
                 $beneficiary->addPhone($phone);
             }
@@ -183,8 +184,10 @@ class BeneficiaryService
 
         foreach ($beneficiaryArray["national_ids"] as $nationalIdArray)
         {
-            $nationalId = $this->getOrSaveNationalId($beneficiary, $nationalIdArray, false);
-            $beneficiary->addNationalId($nationalId);
+            if (!empty($nationalIdArray["id_type"]) && !empty($nationalIdArray["id_number"])) {
+                $nationalId = $this->getOrSaveNationalId($beneficiary, $nationalIdArray, false);
+                $beneficiary->addNationalId($nationalId);
+            }
         }
 
         $this->getOrSaveProfile($beneficiary, $beneficiaryArray["profile"], false);
@@ -234,6 +237,7 @@ class BeneficiaryService
             $phoneArray,
             'any'
         );
+
 
         $phone = new Phone();
         $phone->setBeneficiary($beneficiary)

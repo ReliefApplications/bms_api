@@ -72,25 +72,29 @@ class UserController extends Controller
         
         $clientIp = $request->headers->get('x-real-ip');
         if ($clientIp) {
-            $originRequest = json_decode(file_get_contents('http://www.geoplugin.net/json.gp?ip=' . $clientIp))->geoplugin_countryName;
-            $originISO3 = json_decode(file_get_contents('https://restcountries.eu/rest/v2/name/' . $originRequest))[0]->alpha3Code;    
+            $originRequest = json_decode(file_get_contents('http://www.geoplugin.net/json.gp?ip=' . $clientIp))->geoplugin_countryCode;
+            $originISO3 = json_decode(file_get_contents('https://restcountries.eu/rest/v2/alpha/' . $originRequest))->alpha3Code;    
         } else {
             $originISO3 = null;
         }
         
         try
         {
-            $data = $this->container->get('user.user_service')->login($username, $saltedPassword, $originISO3);
+            $user = $this->container->get('user.user_service')->login($username, $saltedPassword, $originISO3);
         }
         catch (\Exception $exception)
         {
             return new Response($exception->getMessage(), Response::HTTP_FORBIDDEN);
         }
+
+        if ($user->getRoles()[0] === 'ROLE_VENDOR') {
+            return new Response('You cannot connect on this site, please use the app.', Response::HTTP_FORBIDDEN);
+        }
         
         /** @var Serializer $serializer */
         $serializer = $this->get('jms_serializer');
         
-        $userJson = $serializer->serialize($data, 'json', SerializationContext::create()->setGroups(['FullUser'])->setSerializeNull(true));
+        $userJson = $serializer->serialize($user, 'json', SerializationContext::create()->setGroups(['FullUser'])->setSerializeNull(true));
         return new Response($userJson);
     }
 
@@ -237,26 +241,31 @@ class UserController extends Controller
         $user = $request->request->all();
         $userData = $user;
 
-        $user = $serializer->deserialize(json_encode($request->request->all()), User::class, 'json');
-
         try
         {
+            $user = $serializer->deserialize(json_encode($request->request->all()), User::class, 'json');
             $return = $this->get('user.user_service')->create($user, $userData);
+
+            if (!$user instanceof User)
+                return new JsonResponse($user);
+
+            $userJson = $serializer->serialize(
+                $return,
+                'json',
+                SerializationContext::create()->setGroups(['FullUser'])->setSerializeNull(true)
+            );
+            return new Response($userJson);
         }
         catch (\Exception $exception)
         {
+            if ($user instanceof User) {
+                $this->get('user.user_service')->deleteByUsername($user->getUsername());
+            } else {
+                $this->get('user.user_service')->deleteByUsername($user['username']);
+            }
+
             return new Response($exception->getMessage(), 500);
         }
-
-        if (!$user instanceof User)
-            return new JsonResponse($user);
-
-        $userJson = $serializer->serialize(
-            $return,
-            'json',
-            SerializationContext::create()->setGroups(['FullUser'])->setSerializeNull(true)
-        );
-        return new Response($userJson);
     }
 
     /**

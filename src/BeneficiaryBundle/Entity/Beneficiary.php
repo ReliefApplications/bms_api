@@ -65,6 +65,15 @@ class Beneficiary implements ExportableInterface
     private $status;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="residency_status", type="string", length=20)
+     * @Groups({"FullHousehold", "FullReceivers", "Transaction", "SmallHousehold"})
+     * @Assert\Regex("/^(refugee|idp|resident)$/i")
+     */
+    private $residencyStatus;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateOfBirth", type="date")
@@ -466,6 +475,25 @@ class Beneficiary implements ExportableInterface
     }
 
     /**
+     * @return string
+     */
+    public function getResidencyStatus()
+    {
+        return $this->residencyStatus;
+    }
+
+    /**
+     * @param string $residencyStatus
+     *
+     * @return Beneficiary
+     */
+    public function setResidencyStatus($residencyStatus)
+    {
+        $this->residencyStatus = $residencyStatus;
+        return $this;
+    }
+
+    /**
      * Set profile.
      *
      * @param \BeneficiaryBundle\Entity\Profile|null $profile
@@ -497,11 +525,19 @@ class Beneficiary implements ExportableInterface
     function getMappedValueForExport(): array
     {
         // Recover the phones of the beneficiary
-        $valuesphones = [];
+        $typephones = ["",""];
+        $prefixphones = ["",""];
+        $valuesphones = ["",""];
+        $proxyphones = ["",""];
+
+        $index = 0;
         foreach ($this->getPhones()->getValues() as $value) {
-            array_push($valuesphones, $value->getNumber());
+            $typephones[$index] = $value->getType();
+            $prefixphones[$index] = $value->getPrefix();
+            $valuesphones[$index] = $value->getNumber();
+            $proxyphones[$index] = $value->getProxy();
+            $index++;
         }
-        $valuesphones = join(',', $valuesphones);
 
         // Recover the  criterions from Vulnerability criteria object
         $valuescriteria = [];
@@ -511,10 +547,13 @@ class Beneficiary implements ExportableInterface
         $valuescriteria = join(',', $valuescriteria);
 
         // Recover nationalID from nationalID object
+        $typenationalID = [];
         $valuesnationalID = [];
         foreach ($this->getNationalIds()->getValues() as $value) {
+            array_push($typenationalID, $value->getIdType());
             array_push($valuesnationalID, $value->getIdNumber());
         }
+        $typenationalID = join(',', $typenationalID);
         $valuesnationalID = join(',',$valuesnationalID);
 
         //Recover country specifics for the household
@@ -522,8 +561,6 @@ class Beneficiary implements ExportableInterface
         foreach ($this->getHousehold()->getCountrySpecificAnswers()->getValues() as $value){
             $valueCountrySpecific[$value->getCountrySpecific()->getFieldString()] = $value->getAnswer();
         }
-
-        $valueGender = "";
 
         if ($this->getGender() == 0)
             $valueGender = "Female";
@@ -536,27 +573,52 @@ class Beneficiary implements ExportableInterface
         $adm3 = ( ! empty($this->getHousehold()->getLocation()->getAdm3()) ) ? $this->getHousehold()->getLocation()->getAdm3()->getName() : '';
         $adm4 = ( ! empty($this->getHousehold()->getLocation()->getAdm4()) ) ? $this->getHousehold()->getLocation()->getAdm4()->getName() : '';
 
-        $finalArray = [
-            "addressStreet" => $this->getHousehold()->getAddressStreet(),
-            "addressNumber" => $this->getHousehold()->getAddressNumber(),
-            "addressPostcode" => $this->getHousehold()->getAddressPostcode(),
-            "livelihood" => $this->getHousehold()->getLivelihood(),
-            "notes" => $this->getHousehold()->getNotes(),
-            "latitude" => $this->getHousehold()->getLatitude(),
-            "longitude" => $this->getHousehold()->getLongitude(),
-            "adm1" => $adm1,
-            "adm2" =>$adm2,
-            "adm3" =>$adm3,
-            "adm4" =>$adm4,
-        ];
+        if ($this->status === true) {
+            $finalArray = [
+                "addressStreet" => $this->getHousehold()->getAddressStreet(),
+                "addressNumber" => $this->getHousehold()->getAddressNumber(),
+                "addressPostcode" => $this->getHousehold()->getAddressPostcode(),
+                "livelihood" => $this->getHousehold()->getLivelihood(),
+                "notes" => $this->getHousehold()->getNotes(),
+                "latitude" => $this->getHousehold()->getLatitude(),
+                "longitude" => $this->getHousehold()->getLongitude(),
+                "adm1" => $adm1,
+                "adm2" =>$adm2,
+                "adm3" =>$adm3,
+                "adm4" =>$adm4,
+            ];
+        } else {
+            $finalArray = [
+                "addressStreet" => "",
+                "addressNumber" => "",
+                "addressPostcode" => "",
+                "livelihood" => "",
+                "notes" => "",
+                "latitude" => "",
+                "longitude" => "",
+                "adm1" => "",
+                "adm2" => "",
+                "adm3" => "",
+                "adm4" => "",
+            ];
+        }
 
         $tempBenef = [ "givenName" => $this->getGivenName(),
             "familyName"=> $this->getFamilyName(),
             "gender" => $valueGender,
             "status" => $this->getStatus(),
+            "residencyStatus" => $this->getResidencyStatus(),
             "dateOfBirth" => $this->getDateOfBirth()->format('Y-m-d'),
             "vulnerabilityCriteria" => $valuescriteria,
-            "phones" => $valuesphones ,
+            "type phone 1" => $typephones[0],
+            "prefix phone 1" => $prefixphones[0],
+            "phones 1" => $valuesphones[0],
+            "proxy phone 1" => $proxyphones[0],
+            "type phone 2" => $typephones[1],
+            "prefix phone 2" => $prefixphones[1],
+            "phones 2" => $valuesphones[1],
+            "proxy phone 2" => $proxyphones[1],
+            "type national ID" => $typenationalID,
             "nationalIds" => $valuesnationalID
         ];
 

@@ -79,8 +79,13 @@ class UserService
     public function update(User $user, array $userData)
     {
         $role = $userData['rights'];
-        $user->setRoles([$role]);
-        $user->setPassword($userData['password']);
+        if (!empty($role)) {
+            $user->setRoles([$role]);
+        }
+
+        if (!empty($userData['password'])) {
+            $user->setPassword($userData['password']);
+        }
 
         $this->em->persist($user);
 
@@ -180,7 +185,7 @@ class UserService
      * @param string $username
      * @param string $saltedPassword
      * @param $origin
-     * @return array
+     * @return mixed
      * @throws \Exception
      */
     public function login(string $username, string $saltedPassword, $origin)
@@ -232,6 +237,10 @@ class UserService
     public function create(User $user, array $userData)
     {
         $role = $userData['rights'];
+
+        if (!isset($role) || empty($role)) {
+            throw new \Exception("Rights can not be empty");
+        }
 
         $userSaved = $this->em->getRepository(User::class)->findOneByUsername($user->getUsername());
         if (!$userSaved instanceof User)
@@ -344,6 +353,43 @@ class UserService
             } catch (\Exception $exception) {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete an user and its links in the api
+     *
+     * @param string $username
+     * @return bool
+     */
+    public function deleteByUsername(string $username)
+    {
+        $user = $this->em->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        $userCountries = $this->em->getRepository(UserCountry::class)->findByUser($user);
+        if (!empty($userCountries))
+        {
+            foreach ($userCountries as $userCountry)
+            {
+                $this->em->remove($userCountry);
+            }
+        }
+        $userProjects = $this->em->getRepository(UserProject::class)->findByUser($user);
+        if (!empty($userProjects))
+        {
+            foreach ($userProjects as $userProject)
+            {
+                $this->em->remove($userProject);
+            }
+        }
+
+        try {
+            $this->em->remove($user);
+            $this->em->flush();
+        } catch (\Exception $exception) {
+            return false;
         }
 
         return true;

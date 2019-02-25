@@ -5,6 +5,7 @@ namespace VoucherBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * Vendor
@@ -20,6 +21,7 @@ class Vendor
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"FullVendor"})
      */
     private $id;
 
@@ -27,6 +29,7 @@ class Vendor
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @Groups({"FullVendor"})
      */
     private $name;
 
@@ -34,6 +37,7 @@ class Vendor
      * @var string
      *
      * @ORM\Column(name="shop", type="string", length=255)
+     * @Groups({"FullVendor"})
      */
     private $shop;
 
@@ -41,31 +45,33 @@ class Vendor
      * @var string
      *
      * @ORM\Column(name="address", type="string", length=255)
+     * @Groups({"FullVendor"})
      */
     private $address;
 
     /**
-     * @var string
+     * @var bool
      *
-     * @ORM\Column(name="username", type="string", length=255, unique=true)
+     * @ORM\Column(name="archived", type="boolean")
+     * @Groups({"FullVendor"})
      */
-    private $username;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=255)
-     */
-    private $password;
+    private $archived;
 
     /**
      * @ORM\OneToMany(targetEntity="VoucherBundle\Entity\Voucher", mappedBy="vendor", orphanRemoval=true)
      */
     private $vouchers;
 
+    /**
+     * @ORM\OneToOne(targetEntity="\UserBundle\Entity\User")
+     * @Groups({"FullVendor"})
+     */
+    private $user;
+
     public function __construct()
     {
         $this->vouchers = new ArrayCollection();
+        $this->archived = false;
     }
 
 
@@ -152,62 +158,38 @@ class Vendor
     }
 
     /**
-     * Set username.
+     * Set archived.
      *
-     * @param string $username
+     * @param bool $archived
      *
      * @return Vendor
      */
-    public function setUsername($username)
+    public function setArchived($archived)
     {
-        $this->username = $username;
+        $this->archived = $archived;
 
         return $this;
     }
 
     /**
-     * Get username.
+     * Get archived.
      *
-     * @return string
+     * @return bool
      */
-    public function getUsername()
+    public function getArchived()
     {
-        return $this->username;
-    }
-
-    /**
-     * Set password.
-     *
-     * @param string $password
-     *
-     * @return Vendor
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password.
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
+        return $this->archived;
     }
 
     /**
      * @return Collection|Voucher[]
      */
-    public function getVouchers(): Collection
+    public function getVouchers() : Collection
     {
         return $this->vouchers;
     }
 
-    public function addVoucher(Voucher $voucher): self
+    public function addVoucher(Voucher $voucher) : self
     {
         if (!$this->vouchers->contains($voucher)) {
             $this->vouchers[] = $voucher;
@@ -217,7 +199,7 @@ class Vendor
         return $this;
     }
 
-    public function removeVoucher(Voucher $voucher): self
+    public function removeVoucher(Voucher $voucher) : self
     {
         if ($this->vouchers->contains($voucher)) {
             $this->vouchers->removeElement($voucher);
@@ -228,5 +210,29 @@ class Vendor
         }
 
         return $this;
+    }
+
+    /**
+     * Set user.
+     *
+     * @param \UserBundle\Entity\User|null $user
+     *
+     * @return Vendor
+     */
+    public function setUser(\UserBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user.
+     *
+     * @return \UserBundle\Entity\User|null
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

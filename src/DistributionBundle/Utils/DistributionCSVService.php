@@ -106,7 +106,8 @@ class DistributionCSVService
     public function parseCSV($countryIso3, $beneficiaries, DistributionData $distributionData, UploadedFile $uploadedFile)
     {
         $spreadsheet = IOFactory::load($uploadedFile->getRealPath());
-        $sheetArray = $spreadsheet->getSheet(0)->toArray();
+        $worksheet = $spreadsheet->getSheet(0);
+        $sheetArray = $worksheet->rangeToArray('A1:' . $worksheet->getHighestColumn() . $worksheet->getHighestRow(), null, true, true, true);
         $headers = array_shift($sheetArray);
         $arrayWithKeys = array();
         foreach ($sheetArray as $beneficiaryArray) {
@@ -269,6 +270,7 @@ class DistributionCSVService
                         "family_name" => $beneficiaryToCreate['familyName'],
                         "gender" => $beneficiaryToCreate['gender'],
                         "status" => 1,
+                        "residency_status" => $beneficiaryToCreate['residencyStatus'],
                         "date_of_birth" => $beneficiaryToCreate['dateOfBirth'],
                         "profile" => array(
                             "photo" => ""
@@ -331,6 +333,7 @@ class DistributionCSVService
             $toUpdate->setFamilyName($beneficiaryToUpdate['familyName']);
             $toUpdate->setGender($beneficiaryToUpdate['gender']);
             $toUpdate->setStatus(($beneficiaryToUpdate['status']) ? $beneficiaryToUpdate['status'] : 0);
+            $toUpdate->setResidencyStatus($beneficiaryToUpdate['residencyStatus']);
             $toUpdate->setDateOfBirth(new \DateTime($beneficiaryToUpdate['dateOfBirth']));
             
             $toUpdate->setVulnerabilityCriteria(null);
