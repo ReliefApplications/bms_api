@@ -198,6 +198,8 @@ class BookletService
             $voucher->setValue($bookletData['individual_value']);
             if (array_key_exists('password', $bookletData) && !empty($bookletData['password'])) {
               $qrCode = $voucher->getCode();
+
+              // To know if we need to add a new password or replace an existant one
               preg_match('/^[A-Z]+\d+\*[\d]..-[\d]..-[\d]..-[\da-z]+-([\da-zA-Z=\/]+)$/i', $qrCode, $matches);
               if ($matches === null || count($matches) < 1) {
                 $qrCode .= '-' . $bookletData['password'];

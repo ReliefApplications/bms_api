@@ -43,7 +43,7 @@ class VoucherControllerTest extends BMSServiceTestCase
     {
         $body = [
             'number_vouchers' => 3,
-            'bookletCode' => 'test#' . $this->booklet->getCode(),
+            'bookletCode' => 'test*' . $this->booklet->getCode(),
             'currency' => 'USD',
             'bookletID' => NULL,
             'value' => 10,
