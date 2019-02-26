@@ -233,18 +233,18 @@ class BookletController extends Controller
      */
     public function deactivateBooklets(Request $request){
         try {
-            $booklets = $request->request->all();
-            $this->get('voucher.booklet_service')->archiveMany($booklets);
+            $bookletIds = $request->request->all();
+            $this->get('voucher.booklet_service')->deactivateMany($bookletIds);
         } catch (\Exception $exception) {
             return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
         }
 
-        return new Response(json_encode('Booklet successfully archived'));
+        return new Response(json_encode('Booklet successfully deactivated'));
     }
 
     /**
-     * Archive a booklet
-     * @Rest\Delete("/booklets/{id}", name="archive_booklet")
+     * Deactivate a booklet
+     * @Rest\Delete("/deactivate-booklets/{id}", name="deactivate_booklet")
      *
      * @SWG\Tag(name="Booklets")
      *
@@ -257,14 +257,14 @@ class BookletController extends Controller
      * @param Booklet $booklet
      * @return Response
      */
-    public function archiveAction(Booklet $booklet){
+    public function deactivateAction(Booklet $booklet){
         try {
-            $this->get('voucher.booklet_service')->archive($booklet);
+            $this->get('voucher.booklet_service')->deactivate($booklet);
         } catch (\Exception $exception) {
             return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
         }
 
-        return new Response(json_encode('Booklet successfully archived'));
+        return new Response(json_encode('Booklet successfully deactivated'));
     }
 
     /**

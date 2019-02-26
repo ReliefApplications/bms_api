@@ -81,8 +81,7 @@ class BookletService
         $booklet->setCode($code)
           ->setNumberVouchers($bookletData['number_vouchers'])
           ->setCurrency($bookletData['currency'])
-          ->setStatus(0)
-          ->setArchived(0);
+          ->setStatus(0);
 
         $this->em->merge($booklet);
         $this->em->flush();
@@ -148,23 +147,25 @@ class BookletService
 
   
   /**
-   * Get all the non-archived booklets from the database
+   * Get all the non-deactivated booklets from the database
    *
    * @return array
    */
   public function findAll()
   {
-    return  $this->em->getRepository(Booklet::class)->findBy(['archived' => false]);
+    $criteria = new \Doctrine\Common\Collections\Criteria();
+    $criteria->where($criteria->expr()->neq('status', 3));
+    return  $this->em->getRepository(Booklet::class)->matching($criteria);
   }
 
   /**
-   * Get all the archived booklets from the database
+   * Get all the deactivated booklets from the database
    *
    * @return array
    */
   public function findDeactivated()
   {
-    return  $this->em->getRepository(Booklet::class)->findBy(['archived' => true]);
+    return  $this->em->getRepository(Booklet::class)->findBy(['status' => 3]);
   }
 
 
@@ -202,37 +203,37 @@ class BookletService
 
 
     /**
-     * Archive a booklet
+     * Deactivate a booklet
      *
      * @param Booklet $booklet
      * @return string
      */
-    public function archive(Booklet $booklet) {
-        $booklet->setArchived(true);
+    public function deactivate(Booklet $booklet) {
+        $booklet->setStatus(3);
 
         $this->em->merge($booklet);
         $this->em->flush();
 
-        return "Booklet has been archived";
+        return "Booklet has been deactivated";
     }
 
     /**
-     * Archive many booklet
+     * Deactivate many booklet
      *
      * @param int[] $bookletIds
      * @return string
      */
-    public function archiveMany(?array $bookletIds = [])
+    public function deactivateMany(?array $bookletIds = [])
     {
       foreach ($bookletIds as $bookletId) {
         $booklet = $this->em->getRepository(Booklet::class)->find($bookletId);
-        $booklet->setArchived(true);
+        $booklet->setStatus(3);
         $this->em->merge($booklet);
       }
       
       $this->em->flush();
 
-      return "Booklets have been archived";
+      return "Booklets have been deactivated";
     }
 
 
@@ -246,8 +247,8 @@ class BookletService
      * @return string
      */
     public function updatePassword(Booklet $booklet, $password) {
-        if ($booklet->getArchived()){
-            throw new \Exception("This booklet has already been used and is actually archived");
+        if ($booklet->getStatus() === 3){
+            throw new \Exception("This booklet has already been used and is actually deactivated");
         }
 
         $booklet->setPassword($password);
@@ -267,8 +268,8 @@ class BookletService
      * @return string
      */
     public function assign(Booklet $booklet, Beneficiary $beneficiary) {
-        if ($booklet->getArchived()){
-            throw new \Exception("This booklet has already been used and is actually archived");
+        if ($booklet->getStatus() === 3){
+            throw new \Exception("This booklet has already been used and is actually deactivated");
         }
 
         $distributionBeneficiary = $this->em->getRepository(DistributionBeneficiary::class)->findOneByBeneficiary($beneficiary);

@@ -67,14 +67,6 @@ class Booklet
     private $password;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="archived", type="boolean")
-     * @Groups({"FullVendor"})
-     */
-    private $archived;
-
-    /**
      * @ORM\ManyToMany(targetEntity="\VoucherBundle\Entity\Product", inversedBy="booklets")
      * @Groups({"FullBooklet"})
      */
@@ -227,30 +219,6 @@ class Booklet
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Set archived.
-     *
-     * @param bool $archived
-     *
-     * @return Booklet
-     */
-    public function setArchived($archived)
-    {
-        $this->archived = $archived;
-
-        return $this;
-    }
-
-    /**
-     * Get archived.
-     *
-     * @return bool
-     */
-    public function getArchived()
-    {
-        return $this->archived;
     }
 
     /**
