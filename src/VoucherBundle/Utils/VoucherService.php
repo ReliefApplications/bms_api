@@ -136,6 +136,18 @@ class VoucherService
         $product = $this->em->getRepository(Product::class)->find($productId);
         $voucher = $voucher->addProduct($product);
       }
+
+      $booklet = $voucher->getBooklet();
+      $vouchers = $booklet->getVouchers();
+      $allVouchersUsed = true;
+      foreach ($vouchers as $voucher) {
+        if ($voucher->getusedAt() === null) {
+          $allVouchersUsed = false;
+        }
+      }
+      if ($allVouchersUsed === true) {
+        $booklet->setStatus(2);
+      }
   
       $this->em->merge($voucher);
       $this->em->flush();

@@ -272,7 +272,8 @@ class BookletService
 
         $distributionBeneficiary = $this->em->getRepository(DistributionBeneficiary::class)->findOneByBeneficiary($beneficiary);
 
-        $booklet->setDistributionBeneficiary($distributionBeneficiary);
+        $booklet->setDistributionBeneficiary($distributionBeneficiary)
+                ->setStatus(1);
         $this->em->merge($booklet);
         $this->em->flush();
 
