@@ -516,7 +516,6 @@ class BookletController extends Controller
             $pos = strrpos($bookletHtml, $voucherHtmlSeparation);
             $bookletHtml = substr_replace($bookletHtml, $voucherHtml, $pos, strlen($voucherHtmlSeparation));
         }
-
         return $bookletHtml;
     }
 
