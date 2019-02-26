@@ -163,7 +163,7 @@ class BookletService
    */
   public function findDeactivated()
   {
-    return  $this->em->getRepository(Booklet::class)->findBy(['status' => 3]);
+    return  $this->em->getRepository(Booklet::class)->findBy(['status' => Booklet::DEACTIVATED]);
   }
 
 
@@ -207,7 +207,7 @@ class BookletService
      * @return string
      */
     public function deactivate(Booklet $booklet) {
-        $booklet->setStatus(3);
+        $booklet->setStatus(Booklet::DEACTIVATED);
 
         $this->em->merge($booklet);
         $this->em->flush();
@@ -225,7 +225,7 @@ class BookletService
     {
       foreach ($bookletIds as $bookletId) {
         $booklet = $this->em->getRepository(Booklet::class)->find($bookletId);
-        $booklet->setStatus(3);
+        $booklet->setStatus(Booklet::DEACTIVATED);
         $this->em->merge($booklet);
       }
       
@@ -245,7 +245,7 @@ class BookletService
      * @return string
      */
     public function updatePassword(Booklet $booklet, $password) {
-        if ($booklet->getStatus() === 3){
+        if ($booklet->getStatus() === Booklet::DEACTIVATED){
             throw new \Exception("This booklet has already been used and is actually deactivated");
         }
 
@@ -266,14 +266,14 @@ class BookletService
      * @return string
      */
     public function assign(Booklet $booklet, Beneficiary $beneficiary) {
-        if ($booklet->getStatus() === 3){
+        if ($booklet->getStatus() === Booklet::DEACTIVATED){
             throw new \Exception("This booklet has already been used and is actually deactivated");
         }
 
         $distributionBeneficiary = $this->em->getRepository(DistributionBeneficiary::class)->findOneByBeneficiary($beneficiary);
 
         $booklet->setDistributionBeneficiary($distributionBeneficiary)
-                ->setStatus(1);
+                ->setStatus(Booklet::DISTRIBUTED);
         $this->em->merge($booklet);
         $this->em->flush();
 

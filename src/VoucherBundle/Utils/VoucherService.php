@@ -146,7 +146,7 @@ class VoucherService
         }
       }
       if ($allVouchersUsed === true) {
-        $booklet->setStatus(2);
+        $booklet->setStatus(Booklet::USED);
       }
   
       $this->em->merge($voucher);

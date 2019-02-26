@@ -17,6 +17,10 @@ use JMS\Serializer\Annotation\Groups;
  */
 class Booklet
 {
+    public const DISTRIBUTED = 1;
+    public const USED = 2;
+    public const DEACTIVATED = 3;
+
     /**
      * @var int
      *
