@@ -153,9 +153,7 @@ class BookletService
    */
   public function findAll()
   {
-    $criteria = new \Doctrine\Common\Collections\Criteria();
-    $criteria->where($criteria->expr()->neq('status', 3));
-    return  $this->em->getRepository(Booklet::class)->matching($criteria);
+    return  $this->em->getRepository(Booklet::class)->getActiveBooklets();
   }
 
   /**

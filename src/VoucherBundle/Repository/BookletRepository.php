@@ -10,4 +10,12 @@ namespace VoucherBundle\Repository;
  */
 class BookletRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getActiveBooklets() 
+    {
+        $qb = $this->createQueryBuilder('b');
+        $q = $qb->where('b.status != :status')
+            ->setParameter('status', 3);
+        
+        return $q->getQuery()->getResult();
+    }
 }
