@@ -81,7 +81,7 @@ class BookletService
         $booklet->setCode($code)
           ->setNumberVouchers($bookletData['number_vouchers'])
           ->setCurrency($bookletData['currency'])
-          ->setStatus(0);
+          ->setStatus(Booklet::UNASSIGNED);
 
         $this->em->merge($booklet);
         $this->em->flush();
