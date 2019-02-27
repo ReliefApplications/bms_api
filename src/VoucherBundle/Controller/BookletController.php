@@ -13,6 +13,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VoucherBundle\Entity\Booklet;
+use Doctrine\Common\Collections\Collection;
+
 
 /**
  * Class BookletController
@@ -355,4 +357,62 @@ class BookletController extends Controller
         return new Response(json_encode($return));
     }
 
+    /**
+     * To print a batch of booklets
+     *
+     * @Rest\Post("/booklets-print", name="print_booklets")
+     * @SWG\Tag(name="Booklets")
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="SUCCESS",
+     * )
+     *
+     * @SWG\Response(
+     *     response=400,
+     *     description="BAD_REQUEST"
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function printBookletsAction(Request $request)
+    {
+        $bookletData = $request->request->all();
+        $bookletIds = $bookletData['bookletIds'];
+
+        try {
+            return $this->get('voucher.booklet_service')->printMany($bookletIds);
+        } catch (\Exception $exception) {
+            return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * To print a booklet
+     *
+     * @Rest\Get("/booklets/print/{id}", name="print_booklet")
+     * @SWG\Tag(name="Booklets")
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="SUCCESS",
+     * )
+     *
+     * @SWG\Response(
+     *     response=400,
+     *     description="BAD_REQUEST"
+     * )
+     *
+     * @param Booklet $booklet
+     * @return Response
+     */
+    public function printBookletAction(Booklet $booklet)
+    {
+        try {
+            return $this->get('voucher.booklet_service')->generatePdf([$booklet]);;
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
 }

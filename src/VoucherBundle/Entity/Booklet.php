@@ -69,7 +69,7 @@ class Booklet
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
      */
-    private $password;
+    public $password;
 
     /**
      * @ORM\ManyToMany(targetEntity="\VoucherBundle\Entity\Product", inversedBy="booklets")
@@ -283,7 +283,7 @@ class Booklet
         return $this;
     }
 
-    public function getDistributionBeneficiary(): DistributionBeneficiary
+    public function getDistributionBeneficiary(): ?DistributionBeneficiary
     {
         return $this->distribution_beneficiary;
     }
