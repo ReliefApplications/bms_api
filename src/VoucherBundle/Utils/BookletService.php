@@ -14,6 +14,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use VoucherBundle\Entity\Booklet;
 use VoucherBundle\Entity\Voucher;
 use Psr\Container\ContainerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class BookletService
 {
@@ -170,18 +175,6 @@ class BookletService
   {
     return  $this->em->getRepository(Booklet::class)->findBy(['archived' => true]);
   }
-
-  /**
-   * Get a booklet from the database
-   *
-   * @return Booklet
-   */
-  public function findOne($id)
-  {
-    return  $this->em->getRepository(Booklet::class)->find($id);
-  }
-
-
 
   /**
    * Updates a booklet
@@ -347,5 +340,118 @@ class BookletService
     }
     return true;
   }
+
+  public function printMany(array $bookletIds)
+  {
+    $booklets = [];
+    foreach ($bookletIds as $bookletId) {
+      $booklet = $this->em->getRepository(Booklet::class)->find($bookletId);
+      $booklets[] = $booklet;
+    }
+
+    try {
+      return $this->generatePdf($booklets);
+
+    } catch (\Exception $exception) {
+        return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+    }
+  }
+
+  public function generatePdf(array $booklets)
+    {
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $pdfOptions->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($pdfOptions);
+
+        try {
+            $voucherHtmlSeparation = '<p class="next-voucher"></p>';
+            $html = $this->getPdfHtml($booklets[0], $voucherHtmlSeparation);
+
+            foreach($booklets as $booklet) {
+                if ($booklet !== $booklets[0]) {
+                    $bookletHtml = $this->getPdfHtml($booklet, $voucherHtmlSeparation);
+                    preg_match('/<main>([\s\S]*)<\/main>/', $bookletHtml, $matches);
+                    $bookletInnerHtml = '<p style="page-break-before: always">' . $matches[1];
+                    $pos = strrpos($html, $voucherHtmlSeparation);
+                    $html = substr_replace($html, $bookletInnerHtml, $pos, strlen($voucherHtmlSeparation));
+                }
+            }
+
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+            $output = $dompdf->output();
+            $pdfFilepath =  getcwd() . '/otherpdf.pdf';
+            file_put_contents($pdfFilepath, $output);
+
+            $response = new BinaryFileResponse($pdfFilepath);
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'mypdf.pdf');
+            $response->headers->set('Content-Type', 'application/pdf');
+            $response->deleteFileAfterSend(true);
+
+            return $response;
+
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+    }
+
+    public function getPdfHtml(Booklet $booklet, string $voucherHtmlSeparation)
+    {
+        $name = $booklet->getDistributionBeneficiary() ?
+            $booklet->getDistributionBeneficiary()->getBeneficiary()->getFamilyName() :
+            '_______';
+        $currency = $booklet->getCurrency();
+        $bookletQrCode = $booklet->getCode();
+        $vouchers = $booklet->getVouchers();
+        $totalValue = 0;
+        $numberVouchers = $booklet->getNumberVouchers();
+        
+        foreach ($vouchers as $voucher) {
+            $totalValue += $voucher->getValue();
+        }
+
+        $bookletHtml = $this->container->get('templating')->render(
+        '@Voucher/Pdf/booklet.html.twig',
+            array(
+                'name'  => $name,
+                'value' => $totalValue,
+                'currency' => $currency,
+                'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' . $bookletQrCode,
+                'numberVouchers' => $numberVouchers
+            )
+        );
+
+        $pageBreak = true;
+
+        foreach($vouchers as $voucher) {
+            $voucherQrCode = $voucher->getCode();
+            
+            $voucherHtml = $this->container->get('templating')->render(
+                '@Voucher/Pdf/voucher.html.twig',
+                    array(
+                        'name'  => $name,
+                        'value' => $voucher->getValue(),
+                        'currency' => $currency,
+                        'qrCodeLink' => 'https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=' . $voucherQrCode
+                    )
+            );
+
+            if ($pageBreak === true) {
+                $voucherHtml = '<p style="page-break-before: always">' . $voucherHtml;
+            } else {
+                $voucherHtml = '<div><img class="scissors" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAlAAAAJQBeb8N7wAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAE8SURBVDiNrdQ9L0RBFAbgZzchmwgJjX9gSzo/QKJD6zuhRqNUiERJR4coRdQ0oqSjFUGv8ZGQWKxV7Gzc3J29NrJvcjK5c8+8cz7mvLQYubDmMY1RdOIG27hugqMdHXiqbfTgApWUlbCUQVTECT6D/z0mYTdB8ohLfIfvMgYiZMN4iQRxJoRawSt6w4GVhNNaimwOHxGyQxTyKeecxsgF8j20pf5tYhzvsJNK+SqRcgXrgWA/EtUXFtM3d+M84py028jeG8YapZPHjGodTsVrlLQHDGaUpw5DeM6Iti8rshiymtMU8pjFkRak3GhS/t2UrEn517NpdlJqDzuWwUYoW11TYs2oJNZVzKsKQhLLOECB7Ekpoz9ySaY4NJqUEhYiZDUUcexXvu4wkRTYKYygS1Vgt8L6F+oEtqX4AeYWq/jZKMK/AAAAAElFTkSuQmCC" /></div><hr class="separation">' . $voucherHtml;
+            }
+
+            $pageBreak = !$pageBreak;
+
+            $pos = strrpos($bookletHtml, $voucherHtmlSeparation);
+            $bookletHtml = substr_replace($bookletHtml, $voucherHtml, $pos, strlen($voucherHtmlSeparation));
+        }
+
+        return $bookletHtml;
+    }
+
 
 }
