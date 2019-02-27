@@ -80,7 +80,7 @@ class User extends BaseUser implements ExportableInterface
     private $transactions;
 
     /**	
-     * @ORM\OneToOne(targetEntity="\VoucherBundle\Entity\Vendor", inversedBy="user", cascade={"persist", "remove"})	
+     * @ORM\OneToOne(targetEntity="\VoucherBundle\Entity\Vendor", mappedBy="user", cascade={"persist", "remove"})	
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")	
      * @Groups({"FullUser"})	
      */	

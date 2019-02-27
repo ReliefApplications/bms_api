@@ -50,9 +50,9 @@ class VendorService
   {
     $username = $vendorData['username'];
     $userSaved = $this->em->getRepository(User::class)->findOneByUsername($username);
-    $vendorSaved = $userSaved ? $this->em->getRepository(Vendor::class)->getVendorByUser($userSaved) : null;
+    $vendorSaved = $userSaved instanceof User ? $this->em->getRepository(Vendor::class)->getVendorByUser($userSaved) : null;
 
-    if (!$vendorSaved) {
+    if (!($vendorSaved instanceof Vendor)) {
       $userSaved = $this->em->getRepository(User::class)->findOneByUsername($vendorData['username']);
       $user = $this->container->get('user.user_service')->create(
         $userSaved, 
@@ -68,8 +68,8 @@ class VendorService
       ->setAddress($vendorData['address'])
       ->setArchived(false)
       ->setUser($user);
-      
-      $this->em->merge($vendor);
+
+      $this->em->persist($vendor);
       $this->em->flush();
 
       $createdVendor = $this->em->getRepository(Vendor::class)->findOneByUser($user);

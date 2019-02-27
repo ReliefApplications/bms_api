@@ -63,7 +63,7 @@ class Vendor
     private $vouchers;
 
     /**
-     * @ORM\OneToOne(targetEntity="\UserBundle\Entity\User",  inversedBy="vendor", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\UserBundle\Entity\User", inversedBy="vendor", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"FullVendor"})
      */
