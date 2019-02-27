@@ -468,7 +468,9 @@ class BookletController extends Controller
 
     public function getPdfHtml(Booklet $booklet, string $voucherHtmlSeparation)
     {
-        $name = $booklet->getDistributionBeneficiary()->getBeneficiary()->getFamilyName();
+        $name = $booklet->getDistributionBeneficiary() ?
+            $booklet->getDistributionBeneficiary()->getBeneficiary()->getFamilyName() :
+            '_______';
         $currency = $booklet->getCurrency();
         $bookletQrCode = $booklet->getCode();
         $vouchers = $booklet->getVouchers();
