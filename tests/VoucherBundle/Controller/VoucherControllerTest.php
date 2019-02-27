@@ -25,9 +25,7 @@ class VoucherControllerTest extends BMSServiceTestCase
         // We create a new booklet if we have not already created one
         $randomBookletCode = join('-', [rand(0, 999), rand(0, 999), rand(0, 999)]);
         $this->booklet = new Booklet();
-        $this->booklet
-            ->setCode('test*' . $randomBookletCode)
-            ->setArchived(0)
+        $this->booklet->setCode('test*' . $randomBookletCode)
             ->setNumberVouchers(0)
             ->setStatus(0)
             ->setCurrency('USD');

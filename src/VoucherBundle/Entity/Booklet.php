@@ -17,6 +17,11 @@ use JMS\Serializer\Annotation\Groups;
  */
 class Booklet
 {
+    public const UNASSIGNED = 0;
+    public const DISTRIBUTED = 1;
+    public const USED = 2;
+    public const DEACTIVATED = 3;
+
     /**
      * @var int
      *
@@ -65,14 +70,6 @@ class Booklet
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
      */
     public $password;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="archived", type="boolean")
-     * @Groups({"FullVendor"})
-     */
-    private $archived;
 
     /**
      * @ORM\ManyToMany(targetEntity="\VoucherBundle\Entity\Product", inversedBy="booklets")
@@ -227,30 +224,6 @@ class Booklet
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Set archived.
-     *
-     * @param bool $archived
-     *
-     * @return Booklet
-     */
-    public function setArchived($archived)
-    {
-        $this->archived = $archived;
-
-        return $this;
-    }
-
-    /**
-     * Get archived.
-     *
-     * @return bool
-     */
-    public function getArchived()
-    {
-        return $this->archived;
     }
 
     /**
