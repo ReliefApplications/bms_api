@@ -310,7 +310,7 @@ class Booklet
         return $this;
     }
 
-    public function getDistributionBeneficiary(): DistributionBeneficiary
+    public function getDistributionBeneficiary(): ?DistributionBeneficiary
     {
         return $this->distribution_beneficiary;
     }
