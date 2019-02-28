@@ -108,7 +108,7 @@ class BookletService
           'bookletCode' => $code,
           'currency' => $bookletData['currency'],
           'bookletID' => $createdBooklet->getId(),
-          'value' => $bookletData['individual_value'],
+          'values' => $bookletData['individual_values'],
         ];
   
         $this->container->get('voucher.voucher_service')->create($voucherData);

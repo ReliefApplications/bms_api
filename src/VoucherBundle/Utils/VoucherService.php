@@ -43,11 +43,11 @@ class VoucherService
   /**
    * Creates a new Voucher entity
    *
-   * @param array $voucherData
+   * @param array $vouchersData
    * @return mixed
    * @throws \Exception
    */
-  public function create(array $voucherData)
+  public function create(array $vouchersData)
   {
     try {
       $allVoucher = $this->em->getRepository(Voucher::class)->findAll();
@@ -62,13 +62,14 @@ class VoucherService
     }
 
     try {
-      for ($x = 0; $x < $voucherData['number_vouchers']; $x++) {
+      for ($x = 0; $x < $vouchersData['number_vouchers']; $x++) {
         $id++;
-        $voucher = new Voucher();
-  
+        $voucher = new Voucher(); 
+        $voucherData = $vouchersData;
+        $voucherData['value'] = $vouchersData['values'][$x];
         $code = $this->generateCode($voucherData, $id);
         $booklet = $this->em->getRepository(Booklet::class)->find($voucherData['bookletID']);
-
+        
         $voucher->setUsedAt(null)
           ->setCode($code)
           ->setBooklet($booklet)
