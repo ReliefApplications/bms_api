@@ -44,7 +44,7 @@ class VoucherControllerTest extends BMSServiceTestCase
             'bookletCode' => 'test*' . $this->booklet->getCode(),
             'currency' => 'USD',
             'bookletID' => NULL,
-            'value' => 10,
+            'values' => [1, 2, 3],
         ];
 
         // Fake connection with a token for the user tester (ADMIN)
