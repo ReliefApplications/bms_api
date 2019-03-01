@@ -35,7 +35,7 @@ class Voucher
      * @ORM\Column(name="used_at", type="datetime", nullable=true)
      * @Groups({"FullVoucher"})
      */
-    public $usedAt;
+    private $usedAt;
 
     /**
      * @var string
