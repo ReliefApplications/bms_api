@@ -235,7 +235,8 @@ class BookletController extends Controller
      */
     public function deactivateBooklets(Request $request){
         try {
-            $bookletIds = $request->request->all();
+            $data = $request->request->all();
+            $bookletIds = $data['bookletIds'];
             $this->get('voucher.booklet_service')->deactivateMany($bookletIds);
         } catch (\Exception $exception) {
             return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
