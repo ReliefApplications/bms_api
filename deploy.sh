@@ -8,6 +8,7 @@ else
     echo "Unknown environment"
     exit
 fi
+
 if [ -z `ssh-keygen -F $ec2` ]; then
   ssh-keyscan -H $ec2 >> ~/.ssh/known_hosts
 fi
