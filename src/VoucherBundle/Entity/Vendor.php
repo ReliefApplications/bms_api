@@ -59,6 +59,7 @@ class Vendor
 
     /**
      * @ORM\OneToMany(targetEntity="VoucherBundle\Entity\Voucher", mappedBy="vendor", orphanRemoval=true)
+     * @ORM\OrderBy({"usedAt" = "DESC"})
      */
     private $vouchers;
 

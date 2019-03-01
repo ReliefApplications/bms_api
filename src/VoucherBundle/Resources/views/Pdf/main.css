@@ -22,3 +22,16 @@ footer {
     text-align: center;
     color: #02617F;
 }
+
+main {
+    margin-top: 40px;
+}
+
+header h1 img {
+    margin-top: 10px;
+    margin-right: 14px;
+}
+
+header h1 {
+    margin-top: -65px;
+}

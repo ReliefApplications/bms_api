@@ -13,6 +13,12 @@ use VoucherBundle\Entity\Vendor;
 use UserBundle\Entity\User;
 use JMS\Serializer\Serializer;
 use Psr\Container\ContainerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use DateTime;
 
 class VendorService
 {
@@ -185,5 +191,55 @@ class VendorService
       }
 
         return $vendor;
+    }
+
+    public function printInvoice(Vendor $vendor)
+    {
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $pdfOptions->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($pdfOptions);
+
+        try {
+           
+          $now = new DateTime();
+          $vouchers = $vendor->getVouchers();
+          $totalValue = 0;
+          foreach ($vouchers as $voucher) {
+            $voucher->usedAt = $voucher->getusedAt()->format('Y-m-d');
+            $totalValue += $voucher->getValue();
+          }
+
+          $html = $this->container->get('templating')->render(
+            '@Voucher/Pdf/invoice.html.twig',
+                array(
+                    'name'  => $vendor->getName(),
+                    'shop'  => $vendor->getShop(),
+                    'address'  => $vendor->getAddress(),
+                    'date'  => $now->format('Y-m-d'),
+                    'vouchers' => $vouchers,
+                    'totalValue' => $totalValue
+                )
+            );
+
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+            $output = $dompdf->output();
+            $pdfFilepath =  getcwd() . '/invoicepdf.pdf';
+            file_put_contents($pdfFilepath, $output);
+
+            $response = new BinaryFileResponse($pdfFilepath);
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'invoicepdf.pdf');
+            $response->headers->set('Content-Type', 'application/pdf');
+            $response->deleteFileAfterSend(true);
+
+            return $response;
+
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
+
+        return new Response('');
     }
 }
