@@ -14,14 +14,6 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
-# Matrix to test in every php version
-matrix:
-  # Fast finish allows to set the build as "finished" even if the "allow_failures" matrix elements are not finished yet.
-  fast_finish: true
-  include:
-    - php: 7.1
-    - php: 7.2
-
 # Define an environment variable
 env:
   - SYMFONY_VERSION="3.4.*" DB=db_test
@@ -44,6 +36,15 @@ jobs:
     include:
         - stage: test
           script: ./vendor/bin/phpunit
+          fast_finish: true
+          php: 7.1
+        - stage: test
+          script: ./vendor/bin/phpunit
+          fast_finish: true
+          php: 7.2
         - stage: deploy
           if: branch = dev-travis
+          services: false
+          before-install: true
+          install: true
           script: echo "Deploooy"
