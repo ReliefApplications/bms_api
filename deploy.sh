@@ -9,7 +9,7 @@ else
     exit
 fi
 
-ssh -i $2 $ec2 \ 
+ssh -o "StrictHostKeyChecking no" -i $2 $ec2 \ 
     "cd /var/www/html/bms_api; \
     git pull origin dev; \
     sudo docker-compose exec php sf c:c \
