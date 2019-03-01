@@ -16,7 +16,7 @@ final class Version20190225100203 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('
-         CREATE DEFINER=`bms_user`@`% ` FUNCTION `LEVENSHTEIN`(`s1` VARCHAR(255), `s2` VARCHAR(255)) RETURNS INT(11) NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER
+         CREATE DEFINER=`reliefapps`@`% ` FUNCTION `LEVENSHTEIN`(`s1` VARCHAR(255), `s2` VARCHAR(255)) RETURNS INT(11) NOT DETERMINISTIC CONTAINS SQL SQL SECURITY DEFINER
          BEGIN
              DECLARE s1_len, s2_len, i, j, c, c_temp, cost INT;
              DECLARE s1_char CHAR;
