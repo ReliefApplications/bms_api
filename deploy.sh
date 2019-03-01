@@ -8,8 +8,11 @@ else
     echo "Unknown environment"
     exit
 fi
+if [ -z `ssh-keygen -F $ec2` ]; then
+  ssh-keyscan -H $ec2 >> ~/.ssh/known_hosts
+fi
 
-printf 'yes\n' | ssh -i $2 $ec2 \ 
+ssh -i $2 $ec2 \ 
     "cd /var/www/html/bms_api; \
     git pull origin dev; \
     sudo docker-compose exec php sf c:c \
