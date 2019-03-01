@@ -12,8 +12,8 @@ if [ -z `ssh-keygen -F $ec2` ]; then
   ssh-keyscan -H $ec2 >> ~/.ssh/known_hosts
 fi
 
-ssh -i $2 "ubuntu@$ec2" \ 
-    "cd /var/www/html/bms_api; \
+ssh -i $2 ubuntu@$ec2 \
+    'cd /var/www/html/bms_api; \
     git pull origin dev; \
     sudo docker-compose exec php sf c:c; \
-    sudo docker-compose exec php sf d:m :m -n"
+    sudo docker-compose exec php sf d:m :m -n'
