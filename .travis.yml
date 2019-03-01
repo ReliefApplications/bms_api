@@ -44,6 +44,8 @@ install:
 script:
   - ./vendor/bin/phpunit
 
-# After a build, send email notification with the build results
-notifications:
-  email: null
+jobs:
+    include:
+        - stage: deploy
+          if: branch = dev-travis
+          script: echo "Deploooy"
