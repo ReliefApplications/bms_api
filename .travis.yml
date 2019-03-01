@@ -40,12 +40,10 @@ install:
   - php bin/console doctrine:fixtures:load -n --env=test
   - php bin/console jrk:levenshtein:install
 
-# Run script
-script:
-  - ./vendor/bin/phpunit
-
 jobs:
     include:
+        - stage: test
+          script: ./vendor/bin/phpunit
         - stage: deploy
           if: branch = dev-travis
           script: echo "Deploooy"
