@@ -267,8 +267,8 @@ class BookletService
      * @return string
      */
     public function updatePassword(Booklet $booklet, $password) {
-        if ($booklet->getStatus() === Booklet::DEACTIVATED){
-            throw new \Exception("This booklet has already been used and is actually deactivated");
+      if ($booklet->getStatus() === Booklet::DEACTIVATED || $booklet->getStatus() === Booklet::USED){
+        throw new \Exception("This booklet has already been used and is actually deactivated");
         }
 
         $booklet->setPassword($password);
@@ -288,12 +288,11 @@ class BookletService
      * @return string
      */
     public function assign(Booklet $booklet, Beneficiary $beneficiary) {
-        if ($booklet->getStatus() === Booklet::DEACTIVATED){
+        if ($booklet->getStatus() === Booklet::DEACTIVATED || $booklet->getStatus() === Booklet::USED){
             throw new \Exception("This booklet has already been used and is actually deactivated");
         }
 
         $distributionBeneficiary = $this->em->getRepository(DistributionBeneficiary::class)->findOneByBeneficiary($beneficiary);
-
         $booklet->setDistributionBeneficiary($distributionBeneficiary)
                 ->setStatus(Booklet::DISTRIBUTED);
         $this->em->merge($booklet);
