@@ -151,6 +151,55 @@ class BookletControllerTest extends BMSServiceTestCase
     }
 
     /**
+     * @throws \Exception
+     */
+    public function testUpdatePassword()
+    {
+        $booklet = $this->em->getRepository(Booklet::class)->findOneBy(['status' => 0]);
+        // Fake connection with a token for the user tester (ADMIN)
+        $user = $this->getTestUser(self::USER_TESTER);
+        $token = $this->getUserToken($user);
+        $this->tokenStorage->setToken($token);
+
+        $body = ['password' => 'secret-password'];
+
+        // Second step
+        $crawler = $this->request('POST', '/api/wsse/booklets/'.$booklet->getCode().'/password', $body);
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        // Check if the second step succeed
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+
+        return $response;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function testGetProtectedBooklets()
+    {
+        $booklet = $this->em->getRepository(Booklet::class)->findOneBy(['password' => 'secret-password']);
+
+        // Log a user in order to go through the security firewall
+        $user = $this->getTestUser(self::USER_TESTER);
+        $token = $this->getUserToken($user);
+        $this->tokenStorage->setToken($token);
+
+        $crawler = $this->request('GET', '/api/wsse/protected-booklets');
+        $booklets = json_decode($this->client->getResponse()->getContent(), true);
+
+        dump($booklets);
+
+        if (!empty($booklets)) {
+            $code = explode('*', $booklet->getCode())[1];
+            $this->assertEquals($booklets[0][$code], 'secret-password');
+        } else {
+            $this->markTestIncomplete("You currently don't have any deactivated booklets in your database.");
+        }
+
+        return $booklets;
+    }
+
+    /**
      * @depends testCreateBooklet
      * @param $newBooklet
      * @return mixed
