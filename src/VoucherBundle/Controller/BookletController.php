@@ -144,6 +144,51 @@ class BookletController extends Controller
     }
 
     /**
+     * Get booklets that are protected by a password
+     *
+     * @Rest\Get("/protected-booklets", name="get_protected_booklets")
+     *
+     * @SWG\Tag(name="Booklets")
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Booklets delivered",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Booklet::class, groups={"FullBooklet"}))
+     *     )
+     * )
+     *
+     * @SWG\Response(
+     *     response=400,
+     *     description="BAD_REQUEST"
+     * )
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function getProtectedAction(Request $request)
+    {
+        try {
+            $booklets = $this->get('voucher.booklet_service')->findProtected();
+        } catch (\Exception $exception) {
+            return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+
+        $bookletPasswords = [];
+        
+        foreach($booklets as $booklet) {
+            $code = explode('*', $booklet->getCode())[1];
+            $bookletPasswords[] = [
+                $code => $booklet->getPassword()
+            ];
+        }
+
+        $json = $this->get('jms_serializer')->serialize($bookletPasswords, 'json', SerializationContext::create()->setGroups(['FullBooklet'])->setSerializeNull(true));
+        return new Response($json);
+    }
+
+    /**
      * Get single booklet
      *
      * @Rest\Get("/booklets/{id}", name="get_single_booklet")
