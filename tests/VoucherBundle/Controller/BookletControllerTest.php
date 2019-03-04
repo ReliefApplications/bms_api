@@ -185,7 +185,7 @@ class BookletControllerTest extends BMSServiceTestCase
     public function testEditBooklet($newBooklet)
     {
         $currency = 'GBP';
-        $body = ["currency" => $currency, "individual_value" => 5];
+        $body = ["currency" => $currency, "number_vouchers" => 4, "individual_values" => [5, 6, 2, 4]];
 
         $user = $this->getTestUser(self::USER_TESTER);
         $token = $this->getUserToken($user);
