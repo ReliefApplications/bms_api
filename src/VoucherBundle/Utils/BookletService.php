@@ -176,6 +176,16 @@ class BookletService
   }
 
   /**
+   * Get all the protected booklets from the database
+   *
+   * @return array
+   */
+  public function findProtected()
+  {
+    return  $this->em->getRepository(Booklet::class)->getProtectedBooklets();
+  }
+
+  /**
    * Updates a booklet
    *
    * @param Booklet $booklet
@@ -189,28 +199,51 @@ class BookletService
     try {
 
         $booklet->setCurrency($bookletData['currency']);
+        $initialNumberVouchers = $booklet->getNumberVouchers();
+
+        $newNumberVouchers = $bookletData['number_vouchers'];
+        $booklet->setNumberVouchers($newNumberVouchers);
+
+        $vouchersToAdd = (int)$bookletData['number_vouchers'] - $initialNumberVouchers;
+
+        // Create vouchers without default value and no password
+        if ($vouchersToAdd > 0) {
+          try {
+            $values = array_fill(0, $vouchersToAdd, 1);
+            $voucherData = [
+              'number_vouchers' => $vouchersToAdd,
+              'bookletCode' => $booklet->getCode(),
+              'currency' => $bookletData['currency'],
+              'bookletID' => $booklet->getId(),
+              'values' => $values,
+            ];
+      
+            $this->container->get('voucher.voucher_service')->create($voucherData);
+          } catch (\Exception $e) {
+            throw new \Exception('Error creating vouchers');
+          }
+        } else if ($vouchersToAdd < 0) {
+          $vouchersToRemove = - $vouchersToAdd;
+          $vouchers = $this->em->getRepository(Voucher::class)->findBy(['booklet' => $booklet->getId()]);
+          foreach($vouchers as $voucher) {
+            if ($vouchersToRemove > 0) {
+              $this->container->get('voucher.voucher_service')->deleteOneFromDatabase($voucher);
+              $vouchersToRemove -= 1;
+            }
+          }
+        }
+
         if (array_key_exists('password', $bookletData) && !empty($bookletData['password'])) {
           $booklet->setPassword($bookletData['password']);
         }
         $this->em->merge($booklet);
-
+        
         $vouchers = $this->em->getRepository(Voucher::class)->findBy(['booklet' => $booklet->getId()]);
-        /** @var $voucher Voucher */
-        foreach ($vouchers as $voucher) {
-            $voucher->setValue($bookletData['individual_value']);
-            if (array_key_exists('password', $bookletData) && !empty($bookletData['password'])) {
-              $qrCode = $voucher->getCode();
-
-              // To know if we need to add a new password or replace an existant one
-              preg_match('/^[A-Z]+\d+\*[\d]..-[\d]..-[\d]..-[\da-z]+-([\da-zA-Z=\/]+)$/i', $qrCode, $matches);
-              if ($matches === null || count($matches) < 1) {
-                $qrCode .= '-' . $bookletData['password'];
-              } else {
-                $qrCode = str_replace($matches[1], $bookletData['password'], $qrCode);
-              }
-              $voucher->setCode($qrCode);
-            }
-            $this->em->merge($voucher);
+        $values = array_key_exists('individual_values', $bookletData) ? $bookletData['individual_values'] : [];
+        foreach ($vouchers as $index => $voucher) {
+          $password = array_key_exists('password', $bookletData) ? $bookletData['password'] : null;
+          $value = $values[$index] ?: null;
+          $this->updateVoucherCode($voucher, $password, $value, $bookletData['currency']);
         }
 
         $this->em->flush();
@@ -219,6 +252,39 @@ class BookletService
       throw new \Exception('Error updating Booklet');
     }
     return $booklet;
+  }
+
+  public function updateVoucherCode(Voucher $voucher, ?string $password, ?string $value, ?string $currency) {
+
+      $qrCode = $voucher->getCode();
+      // To know if we need to add a new password or replace an existant one
+      preg_match('/^([A-Z]+)(\d+)\*[\d]..-[\d]..-[\d]..-[\da-z]+-([\da-zA-Z=+\/]+)$/i', $qrCode, $matches);
+
+      if ($matches === null || count($matches) < 3) {
+        preg_match('/^([A-Z]+)(\d+)\*[\d]..-[\d]..-[\d]..-[\da-z]+$/i', $qrCode, $matches);
+        if (!empty($password)) {
+          $qrCode .= '-' . $password;
+
+        }
+      } else {
+        if (!empty($password)) {
+          $qrCode = str_replace($matches[3], $password, $qrCode);
+
+        }
+      }
+
+      if (!empty($value)) {
+        $voucher->setValue($value);
+        $oldValuePos = strpos($qrCode, $matches[2]);
+        $qrCode = substr_replace($qrCode, $value, $oldValuePos, strlen($matches[2]));
+      }
+      if (!empty($currency)) {
+        $oldCurrencyPos = strpos($qrCode, $matches[1]);
+        $qrCode = substr_replace($qrCode, $currency, $oldCurrencyPos, strlen($matches[1]));
+      }
+      $voucher->setCode($qrCode);
+
+      $this->em->merge($voucher);
   }
 
 
@@ -272,6 +338,10 @@ class BookletService
         }
 
         $booklet->setPassword($password);
+        $vouchers = $this->em->getRepository(Voucher::class)->findBy(['booklet' => $booklet->getId()]);
+        foreach ($vouchers as $voucher) {
+          $this->updateVoucherCode($voucher, $password, null, null);
+        }
         $this->em->merge($booklet);
         $this->em->flush();
 

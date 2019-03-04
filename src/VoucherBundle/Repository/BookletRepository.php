@@ -18,4 +18,12 @@ class BookletRepository extends \Doctrine\ORM\EntityRepository
         
         return $q->getQuery()->getResult();
     }
+
+    public function getProtectedBooklets() 
+    {
+        $qb = $this->createQueryBuilder('b');
+        $q = $qb->where('b.password IS NOT NULL');
+        
+        return $q->getQuery()->getResult();
+    }
 }
