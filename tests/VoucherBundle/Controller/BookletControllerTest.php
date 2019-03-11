@@ -187,8 +187,6 @@ class BookletControllerTest extends BMSServiceTestCase
         $crawler = $this->request('GET', '/api/wsse/protected-booklets');
         $booklets = json_decode($this->client->getResponse()->getContent(), true);
 
-        dump($booklets);
-
         if (!empty($booklets)) {
             $code = explode('*', $booklet->getCode())[1];
             $this->assertEquals($booklets[0][$code], 'secret-password');
