@@ -313,8 +313,6 @@ class Booklet implements ExportableInterface
         }
 
         $password = empty($this->getPassword()) ? 'No' : 'Yes';
-
-
         $distribution = $this->getDistributionBeneficiary() ?
             $this->getDistributionBeneficiary()->getDistributionData()->getName() :
             null;
