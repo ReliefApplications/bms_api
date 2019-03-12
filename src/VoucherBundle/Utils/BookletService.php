@@ -258,10 +258,10 @@ class BookletService
 
       $qrCode = $voucher->getCode();
       // To know if we need to add a new password or replace an existant one
-      preg_match('/^([A-Z]+)(\d+)\*[\d]..-[\d]..-[\d]..-[\da-z]+-([\da-zA-Z=+-\/]+)$/i', $qrCode, $matches);
+      preg_match('/^([A-Z]+)(\d+)\*[A-Z\d]+\*[\d]..-[\d]..-[\d]..-[\da-z]+-([\da-zA-Z=+-\/]+)$/i', $qrCode, $matches);
 
       if ($matches === null || count($matches) < 3) {
-        preg_match('/^([A-Z]+)(\d+)\*[\d]..-[\d]..-[\d]..-[\da-z]+$/i', $qrCode, $matches);
+        preg_match('/^([A-Z]+)(\d+)\*[A-Z\d]+\*[\d]..-[\d]..-[\d]..-[\da-z]+$/i', $qrCode, $matches);
         if (!empty($password)) {
           $qrCode .= '-' . $password;
 
@@ -306,13 +306,13 @@ class BookletService
     /**
      * Deactivate many booklet
      *
-     * @param int[] $bookletIds
+     * @param string[] $bookletCodes
      * @return string
      */
-    public function deactivateMany(?array $bookletIds = [])
+    public function deactivateMany(?array $bookletCodes = [])
     {
-      foreach ($bookletIds as $bookletId) {
-        $booklet = $this->em->getRepository(Booklet::class)->find($bookletId);
+      foreach ($bookletCodes as $bookletCode) {
+        $booklet = $this->em->getRepository(Booklet::class)->findOneByCode($bookletCode);
         $booklet->setStatus(Booklet::DEACTIVATED);
         $this->em->merge($booklet);
       }

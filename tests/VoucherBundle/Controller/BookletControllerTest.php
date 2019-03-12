@@ -86,7 +86,7 @@ class BookletControllerTest extends BMSServiceTestCase
     {
         $booklets = $this->em->getRepository(Booklet::class)->getActiveBooklets();
 
-        $body = ['bookletIds' => [$booklets[0]->getId()]];
+        $body = ['bookletCodes' => [$booklets[0]->getCode()]];
 
         // Fake connection with a token for the user tester (ADMIN)
         $user = $this->getTestUser(self::USER_TESTER);
@@ -188,8 +188,7 @@ class BookletControllerTest extends BMSServiceTestCase
         $booklets = json_decode($this->client->getResponse()->getContent(), true);
 
         if (!empty($booklets)) {
-            $code = explode('*', $booklet->getCode())[1];
-            $this->assertEquals($booklets[0][$code], 'secret-password');
+            $this->assertEquals($booklets[0][$booklet->getCode()], 'secret-password');
         } else {
             $this->markTestIncomplete("You currently don't have any deactivated booklets in your database.");
         }

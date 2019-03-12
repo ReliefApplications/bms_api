@@ -178,9 +178,8 @@ class BookletController extends Controller
         $bookletPasswords = [];
         
         foreach($booklets as $booklet) {
-            $code = explode('*', $booklet->getCode())[1];
             $bookletPasswords[] = [
-                $code => $booklet->getPassword()
+                $booklet->getCode() => $booklet->getPassword()
             ];
         }
 
@@ -281,8 +280,8 @@ class BookletController extends Controller
     public function deactivateBooklets(Request $request){
         try {
             $data = $request->request->all();
-            $bookletIds = $data['bookletIds'];
-            $this->get('voucher.booklet_service')->deactivateMany($bookletIds);
+            $bookletCodes = $data['bookletCodes'];
+            $this->get('voucher.booklet_service')->deactivateMany($bookletCodes);
         } catch (\Exception $exception) {
             return new Response($exception->getMessage(), Response::HTTP_BAD_REQUEST);
         }
@@ -305,7 +304,7 @@ class BookletController extends Controller
      * @param Booklet $booklet
      * @return Response
      */
-    public function deactivateAction(Booklet $booklet){
+    public function deactivateAction(Booklet $booklet) {
         try {
             $this->get('voucher.booklet_service')->deactivate($booklet);
         } catch (\Exception $exception) {
