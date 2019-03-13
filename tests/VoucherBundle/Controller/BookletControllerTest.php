@@ -161,10 +161,13 @@ class BookletControllerTest extends BMSServiceTestCase
         $token = $this->getUserToken($user);
         $this->tokenStorage->setToken($token);
 
-        $body = ['password' => 'secret-password'];
+        $body = [
+            'password'  => 'secret-password',
+            'code'      => $booklet->getCode(),
+        ];
 
         // Second step
-        $crawler = $this->request('POST', '/api/wsse/booklets/'.$booklet->getCode().'/password', $body);
+        $crawler = $this->request('POST', '/api/wsse/booklets/update/password', $body);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         // Check if the second step succeed
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -284,9 +287,12 @@ class BookletControllerTest extends BMSServiceTestCase
         $user = $this->getTestUser(self::USER_TESTER);
         $token = $this->getUserToken($user);
         $this->tokenStorage->setToken($token);
+        $body = [
+            'code' => $booklet->getCode(),
+        ];
 
         // Second step
-        $crawler = $this->request('POST', '/api/wsse/booklets/'.$booklet->getCode().'/assign/'.$beneficiary->getId());
+        $crawler = $this->request('POST', '/api/wsse/booklets/assign/'.$beneficiary->getId(), $body);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         // Check if the second step succeed
         $this->assertTrue($this->client->getResponse()->isSuccessful());

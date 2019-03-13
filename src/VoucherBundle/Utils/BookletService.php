@@ -63,6 +63,16 @@ class BookletService
     }
   }
 
+    /**
+     * Find one booklet by code
+     *
+     * @param string $code
+     * @return Booklet
+     */
+
+    public function getOne(string $code) {
+        return $this->em->getRepository(Booklet::class)->findOneBy(['code' => $code]);
+    }
 
   /**
    * Creates a new Booklet entity

@@ -343,7 +343,7 @@ class BookletController extends Controller
 
     /**
      * Update password of the booklet
-     * @Rest\Post("/booklets/{code}/password", name="update_password_booklet")
+     * @Rest\Post("/booklets/update/password", name="update_password_booklet")
      *
      * @SWG\Tag(name="Booklets")
      *
@@ -354,13 +354,14 @@ class BookletController extends Controller
      * )
      *
      * @param Request $request
-     * @param Booklet $booklet
      * @return Response
      */
-    public function updatePasswordAction(Request $request, Booklet $booklet)
+    public function updatePasswordAction(Request $request)
     {
         $password = $request->request->get('password');
-         if (!isset($password) || empty($password)) {
+        $code = $request->request->get('code');
+        $booklet = $this->get('voucher.booklet_service')->getOne($code);
+        if (!isset($password) || empty($password)) {
             return new Response("The password is missing", Response::HTTP_BAD_REQUEST);
         }
 
@@ -376,7 +377,7 @@ class BookletController extends Controller
 
     /**
      * Assign the booklet to a specific beneficiary
-     * @Rest\Post("/booklets/{bookletId}/assign/{beneficiaryId}", name="assign_booklet")
+     * @Rest\Post("/booklets/assign/{beneficiaryId}", name="assign_booklet")
      * @ParamConverter("booklet", options={"mapping": {"bookletId": "code"}})
      * @ParamConverter("beneficiary", options={"mapping": {"beneficiaryId": "id"}})
      *
@@ -392,8 +393,10 @@ class BookletController extends Controller
      * @param Beneficiary $beneficiary
      * @return Response
      */
-    public function assignAction(Booklet $booklet, Beneficiary $beneficiary)
+    public function assignAction(Request $request, Beneficiary $beneficiary)
     {
+        $code = $request->request->get('code');
+        $booklet = $this->get('voucher.booklet_service')->getOne($code);
         try {
             $return = $this->get('voucher.booklet_service')->assign($booklet, $beneficiary);
         } catch (\Exception $exception) {
