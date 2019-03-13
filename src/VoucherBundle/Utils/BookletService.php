@@ -113,7 +113,8 @@ class BookletService
   
         $this->container->get('voucher.voucher_service')->create($voucherData);
       } catch (\Exception $e) {
-        throw new \Exception('Error creating vouchers');
+
+          throw new \Exception('Error creating vouchers');
       }
     }
 

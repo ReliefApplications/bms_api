@@ -10,6 +10,7 @@ use \VoucherBundle\Entity\Product;
 use \VoucherBundle\Entity\Booklet;
 use \VoucherBundle\Entity\Vendor;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Type as JMS_Type;
 
 /**
  * Voucher
@@ -88,7 +89,6 @@ class Voucher
      * Set usedAt.
      *
      * @param \DateTime $usedAt
-     *
      * @return Voucher
      */
     public function setusedAt($usedAt)
