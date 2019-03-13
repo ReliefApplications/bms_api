@@ -204,6 +204,9 @@ class VendorService
            
           $now = new DateTime();
           $vouchers = $vendor->getVouchers();
+          if(!count($vouchers)) {
+            throw new \Exception('This vendor has no voucher. Try syncing with the server.', Response::HTTP_BAD_REQUEST);
+          }
           $totalValue = 0;
           foreach ($vouchers as $voucher) {
             $voucher->setusedAt($voucher->getusedAt()->format('Y-m-d'));
