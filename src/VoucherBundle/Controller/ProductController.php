@@ -234,9 +234,17 @@ class ProductController extends Controller
         $content = $request->getContent();
         $file = $request->files->get('file');
 
-        // TO DO : Verify the file type
+        $type = $file->getMimeType();
+        if ($type !== 'image/gif' && $type !== 'image/jpeg' && $type !== 'image/png') {
+            return new Response('The image type must be gif, png or jpg.', Response::HTTP_BAD_REQUEST);
+        }
 
         $adapter = $this->container->get('knp_gaufrette.filesystem_map')->get('products')->getAdapter();
-        $return = $this->get('common.upload_service')->uploadImage($file, $adapter);
+        $filename = $this->get('common.upload_service')->uploadImage($file, $adapter);
+        $bucketName = $this->getParameter('aws_s3_bucket_name');
+        $region = $this->getParameter('aws_s3_region');
+
+        $return = 'https://s3.'.$region.'.amazonaws.com/'.$bucketName.'/products/'.$filename;
+        return new Response(json_encode($return));
     }
 }

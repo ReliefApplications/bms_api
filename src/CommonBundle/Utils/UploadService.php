@@ -71,7 +71,7 @@ class UploadService implements ContainerAwareInterface
 
         try {
 
-            $filename = 'products/'.sprintf('%s.%s', uniqid(), $file->getClientOriginalExtension());
+            $filename = sprintf('%s.%s', uniqid(), $file->getClientOriginalExtension());
             $adapter->setMetadata('Content-Type', $file->getMimeType());
             $response = $adapter->write($filename, file_get_contents($file->getPathname()));
             return $filename;
