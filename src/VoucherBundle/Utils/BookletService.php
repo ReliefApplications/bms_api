@@ -132,13 +132,12 @@ class BookletService
   public function generateCode(array $bookletData, int $currentBatch, int $bookletBatch)
   {
     // === randomCode*bookletBatchNumber-lastBatchNumber-currentBooklet ===
-    $lastBatchNumber = sprintf("%03d", $bookletBatch + ($bookletData['number_booklets'] - 1));
-    $currentBooklet = sprintf("%03d", $currentBatch);
+    $lastBatchNumber = $bookletBatch + ($bookletData['number_booklets'] - 1);
 
     if ($bookletBatch > 1) {
-      $bookletBatchNumber = sprintf("%03d", $bookletBatch);
+      $bookletBatchNumber = $bookletBatch;
     } elseif (!$bookletBatch) {
-      $bookletBatchNumber = "000";
+      $bookletBatchNumber = "0";
     }
 
     // === generates randomCode before * ===
@@ -150,7 +149,7 @@ class BookletService
     foreach (array_rand($seed, 5) as $k) $rand .= $seed[$k];
     
     // === joins all parts together ===
-    $fullCode = $rand . '*' . $bookletBatchNumber . '-' . $lastBatchNumber . '-' . $currentBooklet;
+    $fullCode = $rand . '*' . $bookletBatchNumber . '-' . $lastBatchNumber . '-' . $currentBatch;
     return $fullCode;
   }
 
@@ -258,10 +257,10 @@ class BookletService
 
       $qrCode = $voucher->getCode();
       // To know if we need to add a new password or replace an existant one
-      preg_match('/^([A-Z]+)(\d+)\*[A-Z\d]+\*[\d]..-[\d]..-[\d]..-[\da-z]+-([\da-zA-Z=+-\/]+)$/i', $qrCode, $matches);
+      preg_match('/^([A-Z]+)(\d+)\*[A-Z\d]+\*[\d]+-[\d]+-[\d]+-[\d]+-([\dA-Z=+-\/]+)$/i', $qrCode, $matches);
 
       if ($matches === null || count($matches) < 3) {
-        preg_match('/^([A-Z]+)(\d+)\*[A-Z\d]+\*[\d]..-[\d]..-[\d]..-[\da-z]+$/i', $qrCode, $matches);
+        preg_match('/^([A-Z]+)(\d+)\*[A-Z\d]+\*[\d]+-[\d]+-[\d]+-[\d]+$/i', $qrCode, $matches);
         if (!empty($password)) {
           $qrCode .= '-' . $password;
 

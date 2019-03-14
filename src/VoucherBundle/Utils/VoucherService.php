@@ -99,12 +99,11 @@ class VoucherService
   public function generateCode(array $voucherData, int $voucherId)
   {
     // CREATE VOUCHER CODE CurrencyValue*BookletBatchNumber-lastBatchNumber-BookletId-VoucherId
-    $currentVoucher = sprintf("%03d", $voucherId);
     $value = $voucherData['value'];
     $currency = $voucherData['currency'];
     $booklet = $this->em->getRepository(Booklet::class)->find($voucherData['bookletID']);
   
-    $fullCode = $currency . $value . '*' . $voucherData['bookletCode'] . '-' . $currentVoucher;
+    $fullCode = $currency . $value . '*' . $voucherData['bookletCode'] . '-' . $voucherId;
     $fullCode = $booklet->password ? $fullCode . '-' . $booklet->password : $fullCode;
     return $fullCode;
   }

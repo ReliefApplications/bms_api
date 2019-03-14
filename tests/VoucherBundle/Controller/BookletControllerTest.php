@@ -28,7 +28,7 @@ class BookletControllerTest extends BMSServiceTestCase
     {
         $body = [
             "number_booklets" => 5,
-            "individual_values" => [10, 3, 5, 1, 12],
+            "individual_values" => [10, 3, 5],
             "currency" => 'USD',
             "number_vouchers" => 3
         ];
