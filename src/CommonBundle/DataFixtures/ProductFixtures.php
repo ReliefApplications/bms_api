@@ -13,17 +13,16 @@ class ProductFixtures extends Fixture
 {
 
     private $data = [
-        ['soap', 'Unit', '../../assets/imgs/soap.jpg', 0],
-        ['toothbrush', 'Unit', '../../assets/imgs/toothbrush.jpg', 0],
-        ['pear', 'KG', '../../assets/imgs/pear.jpg', 0],
-        ['rice', 'KG', '../../assets/imgs/rice.jpg', 0],
-        ['flour', 'KG', '../../assets/imgs/flour.jpg', 0],
-        ['toothpaste', 'Unit', '../../assets/imgs/toothpaste.jpg', 0],
-        ['apple', 'KG', '../../assets/imgs/apples.jpeg', 0],
-        ['hair brush', 'Unit', '../../assets/imgs/hairbrush.jpg', 0],
-        ['cherry', 'KG', '../../assets/imgs/cherries.jpg', 0],
-        ['book', 'Unit', '../../assets/imgs/book.png', 0],
-        ['cake', 'Unit', '../../assets/imgs/cake.jpg', 0],
+        ['soap', 'Unit', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a1505596a4.jpg', 0],
+        ['toothbrush', 'Unit', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a15252e30e.jpg', 0],
+        ['pear', 'KG', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a158059d28.jpg', 0],
+        ['rice', 'KG', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a154759a4d.jpg', 0],
+        ['flour', 'KG', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a159580fdf.jpg', 0],
+        ['toothpaste', 'Unit', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a15a54ae7f.jpg', 0],
+        ['apple', 'KG', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a15d379307.jpeg', 0],
+        ['cherry', 'KG', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a160605fe0.jpg', 0],
+        ['book', 'Unit', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a161a9d3dd.png', 0],
+        ['cake', 'Unit', 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a162f9cdeb.jpg', 0],
 
     ];
 

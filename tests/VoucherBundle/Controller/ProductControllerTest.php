@@ -26,8 +26,8 @@ class ProductControllerTest extends BMSServiceTestCase
     public function testCreateProduct()
     {
         $body = [
-            "image" => 'http://image',
-            "name" => 'product',
+            "image" => 'image.png',
+            "name" => 'test',
             "unit" => 'KG'
         ];
 
@@ -86,7 +86,7 @@ class ProductControllerTest extends BMSServiceTestCase
     public function testEditProduct($newProduct)
     {
         $unit = "Centiliters";
-        $body = ["image" => 'http://other-image', "unit" => $unit];
+        $body = ["image" => 'https://s3.eu-central-1.amazonaws.com/files-testing.bmstaging.info/products/5c8a170aba331.png', "unit" => $unit];
 
         $user = $this->getTestUser(self::USER_TESTER);
         $token = $this->getUserToken($user);
