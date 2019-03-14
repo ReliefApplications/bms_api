@@ -210,7 +210,7 @@ class ProductController extends Controller
     }
 
     /**
-     * @Rest\Post("/uploadImage", name="upload_image")
+     * @Rest\Post("/products/upload/image", name="upload_image")
      * 
      * @SWG\Tag(name="UploadImage")
      *
