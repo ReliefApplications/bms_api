@@ -29,7 +29,7 @@ class Booklet implements ExportableInterface
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Groups({"FullBooklet"})
+     * @Groups({"FullBooklet", "ValidatedDistribution"})
      */
     private $id;
 
