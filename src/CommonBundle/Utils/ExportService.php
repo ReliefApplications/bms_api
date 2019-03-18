@@ -102,6 +102,7 @@ Class ExportService {
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function export($exportableTable, string $name, string $type) {
+
         $rows = [];
 
         // step 1 : Convert the mapping as data
@@ -133,7 +134,13 @@ Class ExportService {
 
         // get table headers titles
         reset($rows);
-        $tableHeaders = array_keys($rows[0]);
+        $rowWithMoreColumns = $rows[0];
+        foreach ($rows as $row) {
+            if (count($row) > count($rowWithMoreColumns)) {
+                $rowWithMoreColumns = $row;
+            }
+        }
+        $tableHeaders = array_keys($rowWithMoreColumns);
 
         foreach ($tableHeaders as $key => $value) {
             if ($key == 26) {

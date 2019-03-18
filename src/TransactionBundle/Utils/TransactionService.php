@@ -298,11 +298,25 @@ class TransactionService {
      * @return mixed
      */
     public function exportToCsv(DistributionData $distributionData, string $type) {
-        $distributionBeneficiary = $this->em->getRepository(DistributionBeneficiary::class)->findByDistributionData($distributionData);
+        $distributionBeneficiaries = $this->em->getRepository(DistributionBeneficiary::class)->findByDistributionData($distributionData);
 
+        if ($distributionBeneficiaries[0] && count($distributionBeneficiaries[0]->getBooklets()) > 0) {
+            return $this->exportVoucherTransactionToCsv($distributionBeneficiaries, $type);
+        } else {
+            return $this->exportTransactionToCsv($distributionBeneficiaries, $type);
+        }
+    }
+
+     /**
+     * @param array $distributionBeneficiaries
+     * @param string $type
+     * @return mixed
+     */
+    public function exportTransactionToCsv(array $distributionBeneficiaries, string $type) {
+        
         $transactions = array();
         $exportableTable = array();
-        foreach ($distributionBeneficiary as $db) {
+        foreach ($distributionBeneficiaries as $db) {
             $transaction = $this->em->getRepository(Transaction::class)->findOneByDistributionBeneficiary($db);
 
             if ($transaction) {
@@ -331,23 +345,76 @@ class TransactionService {
                 $gender = 'Male';
 
             array_push($exportableTable, array(
-                "addressStreet" => $beneficiary->getHousehold()->getAddressStreet(),
-                "addressNumber" => $beneficiary->getHousehold()->getAddressNumber(),
-                "addressPostcode" => $beneficiary->getHousehold()->getAddressPostcode(),
-                "livelihood" => $beneficiary->getHousehold()->getLivelihood(),
-                "notes" => $beneficiary->getHousehold()->getNotes(),
-                "latitude" => $beneficiary->getHousehold()->getLatitude(),
-                "longitude" => $beneficiary->getHousehold()->getLongitude(),
-                "givenName" => $beneficiary->getGivenName(),
-                "familyName"=> $beneficiary->getFamilyName(),
-                "gender" => $gender,
-                "dateOfBirth" => $beneficiary->getDateOfBirth()->format('Y-m-d'),
-                "amount_sent" => $transaction->getAmountSent(),
-                "date_sent" => $transaction->getDateSent(),
-                "transaction_status" => $status,
-                "message" => $transaction->getMessage(),
-                "money_received" => $transaction->getMoneyReceived(),
-                "pickup_date" => $transaction->getPickupDate(),
+                "Address street" => $beneficiary->getHousehold()->getAddressStreet(),
+                "Address number" => $beneficiary->getHousehold()->getAddressNumber(),
+                "Address postcode" => $beneficiary->getHousehold()->getAddressPostcode(),
+                "Livelihood" => $beneficiary->getHousehold()->getLivelihood(),
+                "Notes" => $beneficiary->getHousehold()->getNotes(),
+                "Latitude" => $beneficiary->getHousehold()->getLatitude(),
+                "Longitude" => $beneficiary->getHousehold()->getLongitude(),
+                "Given name" => $beneficiary->getGivenName(),
+                "Family name"=> $beneficiary->getFamilyName(),
+                "Gender" => $gender,
+                "Date of birth" => $beneficiary->getDateOfBirth()->format('Y-m-d'),
+                "Amount sent" => $transaction->getAmountSent(),
+                "Date sent" => $transaction->getDateSent(),
+                "Transaction status" => $status,
+                "Message" => $transaction->getMessage(),
+                "Money_received" => $transaction->getMoneyReceived(),
+                "Pickup date" => $transaction->getPickupDate(),
+            ));
+        }
+
+        return $this->container->get('export_csv_service')->export($exportableTable,'transaction', $type);
+    }
+
+     /**
+     * @param array $distributionBeneficiaries
+     * @param string $type
+     * @return mixed
+     */
+    public function exportVoucherTransactionToCsv(array $distributionBeneficiaries, string $type)
+    {
+        $beneficiaries = [];
+        $exportableTable = [];
+        foreach ($distributionBeneficiaries as $distributionBeneficiary) {
+
+            $beneficiary = $distributionBeneficiary->getBeneficiary();
+            $booklets = $distributionBeneficiary->getBooklets();
+            $transactionBooklet = null;
+            if (count($booklets) > 0) {
+                foreach ($booklets as $booklet) {
+                    if ($booklet->getStatus() !== 3) {
+                        $transactionBooklet = $booklet;
+                    }
+                }
+                if ($transactionBooklet === null) {
+                    $transactionBooklet = $booklets[0];
+                }
+            }
+            $gender = '';
+
+            if ($beneficiary->getGender() == 0)
+                $gender = 'Female';
+            else
+                $gender = 'Male';
+
+            array_push($exportableTable, array(
+                "Address street" => $beneficiary->getHousehold()->getAddressStreet(),
+                "Address number" => $beneficiary->getHousehold()->getAddressNumber(),
+                "Address postcode" => $beneficiary->getHousehold()->getAddressPostcode(),
+                "Livelihood" => $beneficiary->getHousehold()->getLivelihood(),
+                "Notes" => $beneficiary->getHousehold()->getNotes(),
+                "Latitude" => $beneficiary->getHousehold()->getLatitude(),
+                "Longitude" => $beneficiary->getHousehold()->getLongitude(),
+                "Given name" => $beneficiary->getGivenName(),
+                "Family name"=> $beneficiary->getFamilyName(),
+                "Gender" => $gender,
+                "Date of birth" => $beneficiary->getDateOfBirth()->format('Y-m-d'),
+                "Booklet" => $transactionBooklet ? $transactionBooklet->getCode() : null,
+                "Status" => $transactionBooklet ? $transactionBooklet->getStatus() : null,
+                "Value" => $transactionBooklet ? $transactionBooklet->getTotalValue().' '. $transactionBooklet->getCurrency() : null,
+                "Used at" => $transactionBooklet ? $transactionBooklet->getUsedAt() : null,
             ));
         }
 
