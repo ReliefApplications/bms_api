@@ -134,13 +134,7 @@ Class ExportService {
 
         // get table headers titles
         reset($rows);
-        $rowWithMoreColumns = $rows[0];
-        foreach ($rows as $row) {
-            if (count($row) > count($rowWithMoreColumns)) {
-                $rowWithMoreColumns = $row;
-            }
-        }
-        $tableHeaders = array_keys($rowWithMoreColumns);
+        $tableHeaders = array_keys($rows[0]);
 
         foreach ($tableHeaders as $key => $value) {
             if ($key == 26) {
@@ -155,8 +149,6 @@ Class ExportService {
             $index = $newKey.chr(ord('A')+ $key).$rowIndex;
             $worksheet->setCellValue($index, $value);
         }
-
-
 
         $rowIndex++;
         foreach ($rows as $key => $value) {
