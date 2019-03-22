@@ -6,6 +6,7 @@ use BeneficiaryBundle\Entity\ProjectBeneficiary;
 use BeneficiaryBundle\Entity\Household;
 use DistributionBundle\Entity\DistributionData;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineExtensions\Query\Mysql\Date;
 use JMS\Serializer\Serializer;
 use ProjectBundle\Entity\Donor;
 use ProjectBundle\Entity\Sector;
@@ -106,14 +107,18 @@ class ProjectService
     public function create($countryISO3, array $projectArray, User $user)
     {
         /** @var Project $project */
+<<<<<<< Updated upstream
         $newProject = $this->serializer->deserialize(json_encode($projectArray), Project::class, 'json');
+=======
+
+>>>>>>> Stashed changes
         $project = new Project();
-        $project->setName($newProject->getName())
-                ->setStartDate($newProject->getStartDate())
-                ->setEndDate($newProject->getEndDate())
+        $project->setName($projectArray["name"])
+                ->setStartDate(new DateTime($projectArray["startDate"]))
+                ->setEndDate(new DateTime($projectArray["endDate"]))
                 ->setIso3($countryISO3)
-                ->setValue($newProject->getValue())
-                ->setNotes($newProject->getNotes());
+                ->setValue($projectArray["value"])
+                ->setNotes($projectArray["notes"]);
 
         $errors = $this->validator->validate($project);
         if (count($errors) > 0)
@@ -126,7 +131,7 @@ class ProjectService
             throw new \Exception(json_encode($errorsArray), Response::HTTP_BAD_REQUEST);
         }
 
-        $sectors = $newProject->getSectors();
+        $sectors = $projectArray["sectors"];
         if (null !== $sectors)
         {
             $project->getSectors()->clear();
@@ -139,7 +144,7 @@ class ProjectService
             }
         }
 
-        $donors = $newProject->getDonors();
+        $donors = $projectArray["donors"];
         if (null !== $donors)
         {
             $project->getDonors()->clear();
