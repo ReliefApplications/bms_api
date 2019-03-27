@@ -6,13 +6,13 @@ use BeneficiaryBundle\Entity\ProjectBeneficiary;
 use BeneficiaryBundle\Entity\Household;
 use DistributionBundle\Entity\DistributionData;
 use Doctrine\ORM\EntityManagerInterface;
-use DoctrineExtensions\Query\Mysql\Date;
 use JMS\Serializer\Serializer;
 use ProjectBundle\Entity\Donor;
 use ProjectBundle\Entity\Sector;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use ProjectBundle\Entity\Project;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use UserBundle\Entity\User;
 use UserBundle\Entity\UserProject;
@@ -107,18 +107,20 @@ class ProjectService
     public function create($countryISO3, array $projectArray, User $user)
     {
         /** @var Project $project */
-<<<<<<< Updated upstream
-        $newProject = $this->serializer->deserialize(json_encode($projectArray), Project::class, 'json');
-=======
 
->>>>>>> Stashed changes
+        $newProject = $this->serializer->deserialize(json_encode($projectArray), Project::class, 'json');
         $project = new Project();
-        $project->setName($projectArray["name"])
-                ->setStartDate(new DateTime($projectArray["startDate"]))
-                ->setEndDate(new DateTime($projectArray["endDate"]))
+        $project->setName($newProject->getName())
+                ->setStartDate($newProject->getStartDate())
+                ->setEndDate($newProject->getEndDate())
                 ->setIso3($countryISO3)
-                ->setValue($projectArray["value"])
-                ->setNotes($projectArray["notes"]);
+                ->setValue($newProject->getValue())
+                ->setNotes($newProject->getNotes());
+
+        $existingProject = $this->em->getRepository(Project::class)->findBy(['name' => $project->getName()]);
+        if (!empty($existingProject)) {
+           throw new HttpException(Response::HTTP_CONFLICT, 'Project with the name '.$project->getName().' already exists');
+        }
 
         $errors = $this->validator->validate($project);
         if (count($errors) > 0)
@@ -131,7 +133,7 @@ class ProjectService
             throw new \Exception(json_encode($errorsArray), Response::HTTP_BAD_REQUEST);
         }
 
-        $sectors = $projectArray["sectors"];
+        $sectors = $newProject->getSectors();
         if (null !== $sectors)
         {
             $project->getSectors()->clear();
@@ -144,7 +146,7 @@ class ProjectService
             }
         }
 
-        $donors = $projectArray["donors"];
+        $donors = $newProject->getDonors();
         if (null !== $donors)
         {
             $project->getDonors()->clear();
