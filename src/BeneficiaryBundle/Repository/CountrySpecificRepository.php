@@ -12,6 +12,6 @@ class CountrySpecificRepository extends \Doctrine\ORM\EntityRepository
 {
     public function findForCriteria(array $filters)
     {
-        return $this->findBy(["countryIso3" => $filters['__country']]);
+        return $this->findBy(["countryIso3" => $filters['__country'], "fieldString" => "IDPoor"]);
     }
 }
