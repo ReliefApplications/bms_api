@@ -115,7 +115,7 @@ class HouseholdService
      * @throws ValidationException
      * @throws \Exception
      */
-    public function createOrEdit(array $householdArray, array $projectsArray, $household = null, bool $flush = true)
+    public function createOrEdit(array $householdArray, array $projectsArray, $household = null, bool $flush = true, &$camps = [])
     {
         if (!empty($projectsArray) && (gettype($projectsArray[0]) === 'string' || gettype($projectsArray[0]) === 'integer')) {
             $projectsArray = $this->em->getRepository(Project::class)->findBy(["id" => $projectsArray]);
@@ -150,6 +150,14 @@ class HouseholdService
             if ($householdLocation['type'] === HouseholdLocation::LOCATION_TYPE_CAMP) {
                 // Try to find the camp with the name in the request
                 $camp = $this->em->getRepository(Camp::class)->findOneBy(['name' => $householdLocation['camp_address']['camp']['name']]);
+                if (!$camp) {
+                    $campsWithSameName = array_filter($camps, function($alreadyStoredCamp) {
+                        return $alreadyStoredCamp->getName() === $householdLocation['camp_address']['camp']['name'];
+                    });
+                    $camp = $campsWithSameName ? $campsWithSameName[0] : null;
+                } else {
+                    array_push($camps, $camp);
+                }
                 // Or create a camp with the name in the request
                 if (!$camp) {
                     $location = $this->locationService->getLocation($householdArray['__country'], $householdLocation['camp_address']['camp']["location"]);
@@ -159,6 +167,7 @@ class HouseholdService
                     $camp = new Camp();
                     $camp->setName($householdLocation['camp_address']['camp']['name']);
                     $camp->setLocation($location);
+                    array_push($camps, $camp);
                 }
                 $campAddress = new CampAddress();
                 $campAddress->setTentNumber($householdLocation['camp_address']['tent_number'])

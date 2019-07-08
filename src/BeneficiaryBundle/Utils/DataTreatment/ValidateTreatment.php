@@ -39,8 +39,8 @@ class ValidateTreatment extends AbstractTreatment
         $createdHouseholds  = [];
 
         foreach ($householdsToCreate as $index => $household) {
-            $createdHouseholds[] = $this->householdService->createOrEdit($household['new'], [$project], null, false);
-
+            $camps = [];
+            $createdHouseholds[] = $this->householdService->createOrEdit($household['new'], [$project], null, false, $camps);
             if ($index !== 0 && $index % 300 === 0) {
                 $this->em->flush();
             }
