@@ -175,19 +175,19 @@ class LocationService
 
             if (!empty($location->getAdm1())) {
                 $adm = "adm1";
-                $location_name = $location->getAdm1()->getName();
+                $locationName = $location->getAdm1()->getName();
                 $code = $location->getAdm1()->getCode();
             } elseif (!empty($location->getAdm2())) {
                 $adm = "adm2";
-                $location_name = $location->getAdm2()->getName();
+                $locationName = $location->getAdm2()->getName();
                 $code = $location->getAdm2()->getCode();
             } elseif (!empty($location->getAdm3())) {
                 $adm = "adm3";
-                $location_name = $location->getAdm3()->getName();
+                $locationName = $location->getAdm3()->getName();
                 $code = $location->getAdm3()->getCode();
             } elseif (!empty($location->getAdm4())) {
                 $adm = "adm4";
-                $location_name = $location->getAdm4()->getName();
+                $locationName = $location->getAdm4()->getName();
                 $code = $location->getAdm4()->getCode();
             }
 
@@ -201,7 +201,7 @@ class LocationService
                     "name" => $distribution->getName(),
                     "date" => $distribution->getDateDistribution(),
                     "project_name" => $distribution->getProject()->getName(),
-                    "location_name" => $location_name,
+                    "location_name" => $locationName,
                     "commodity" => $distribution->getCommodities()[0]->getModalityType(),
                 ];
                 array_push($data['distribution'], $upcomingDistribution);
@@ -213,7 +213,7 @@ class LocationService
                             "name" => $distribution->getName(),
                             "date" => $distribution->getDateDistribution(),
                             "project_name" => $distribution->getProject()->getName(),
-                            "location_name" => $location_name,
+                            "location_name" => $locationName,
                         ];
                         $upcomingDistributionFind = true;
                         array_push($data['distribution'], $upcomingDistribution);
@@ -230,7 +230,7 @@ class LocationService
                         "date" => $distribution->getDateDistribution(),
                         "project_name" => $distribution->getProject()->getName(),
 
-                        "location_name" => $location_name,
+                        "location_name" => $locationName,
                     ];
                     array_push($data['distribution'], $upcomingDistribution);
                     array_push($response, $data);

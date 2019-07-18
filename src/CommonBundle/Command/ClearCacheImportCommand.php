@@ -33,10 +33,10 @@ class ClearCacheImportCommand extends ContainerAwareCommand
             '',
         ]);
 
-        $dir_root = $this->getContainer()->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (is_dir($dir_var)) {
-            $this->rrmdir($dir_var);
+        $dirRoot = $this->getContainer()->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (is_dir($dirVar)) {
+            $this->rrmdir($dirVar);
         }
         $output->writeln([
             'END'

@@ -140,14 +140,14 @@ class TransactionService
      */
     public function sendLogsEmail(User $user, DistributionData $distributionData)
     {
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (! is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (! is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $file_record = $dir_var . '/record_' . $distributionData->getId() . '.csv';
+        $fileRecord = $dirVar . '/record_' . $distributionData->getId() . '.csv';
 
-        if (is_file($file_record) && file_get_contents($file_record)) {
+        if (is_file($fileRecord) && file_get_contents($fileRecord)) {
             $message = (new \Swift_Message('Transaction logs for ' . $distributionData->getName()))
                 ->setFrom('admin@bmstaging.info')
                 ->setTo($user->getEmail())
@@ -161,7 +161,7 @@ class TransactionService
                     ),
                     'text/html'
                 );
-            $message->attach(\Swift_Attachment::fromPath($dir_root . '/../var/data/record_' . $distributionData->getId() . '.csv')->setFilename('logsTransaction.csv'));
+            $message->attach(\Swift_Attachment::fromPath($dirRoot . '/../var/data/record_' . $distributionData->getId() . '.csv')->setFilename('logsTransaction.csv'));
         } else {
             $message = (new \Swift_Message('Transaction logs for ' . $distributionData->getName()))
                 ->setFrom('admin@bmstaging.info')

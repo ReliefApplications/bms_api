@@ -292,12 +292,12 @@ class CSVToArrayMapper extends AbstractMapper
      */
     private function mapVulnerabilityCriteria(&$formattedHouseholdArray)
     {
-        $vulnerability_criteria_string = $formattedHouseholdArray['beneficiaries']['vulnerability_criteria'];
+        $vulnerabilityCriteriaString = $formattedHouseholdArray['beneficiaries']['vulnerability_criteria'];
 
         // We are separating the vulnerability criteria in the list and turning them into camelCase as in DB
-        $vulnerability_criteria_array = array_map('trim', explode(';', str_replace(' ', '', ucwords($vulnerability_criteria_string))));
+        $vulnerabilityCriteriaArray = array_map('trim', explode(';', str_replace(' ', '', ucwords($vulnerabilityCriteriaString))));
         $formattedHouseholdArray['beneficiaries']['vulnerability_criteria'] = [];
-        foreach ($vulnerability_criteria_array as $item) {
+        foreach ($vulnerabilityCriteriaArray as $item) {
             $vulnerabilityId = $this->getVulnerabilityCriteriaId($item);
             if (empty($vulnerabilityId)) {
                 continue;
@@ -335,27 +335,27 @@ class CSVToArrayMapper extends AbstractMapper
      */
     private function mapPhones(&$formattedHouseholdArray)
     {
-        $types1_string = $formattedHouseholdArray['beneficiaries']['phone1_type'];
-        $phone1_prefix_string = $formattedHouseholdArray['beneficiaries']['phone1_prefix'];
-        $phone1_number_string = $formattedHouseholdArray['beneficiaries']['phone1_number'];
-        $phone1_proxy_string = $formattedHouseholdArray['beneficiaries']['phone1_proxy'];
+        $types1String = $formattedHouseholdArray['beneficiaries']['phone1_type'];
+        $phone1PrefixString = $formattedHouseholdArray['beneficiaries']['phone1_prefix'];
+        $phone1NumberString = $formattedHouseholdArray['beneficiaries']['phone1_number'];
+        $phone1ProxyString = $formattedHouseholdArray['beneficiaries']['phone1_proxy'];
 
-        $phone1_prefix_string = str_replace("'", '', $phone1_prefix_string);
-        $phone1_number_string = str_replace("'", '', $phone1_number_string);
+        $phone1PrefixString = str_replace("'", '', $phone1PrefixString);
+        $phone1NumberString = str_replace("'", '', $phone1NumberString);
 
         $formattedHouseholdArray['beneficiaries']['phones'] = [];
-        array_push($formattedHouseholdArray['beneficiaries']['phones'], array('type' => $types1_string, 'prefix' => $phone1_prefix_string, 'number' => $phone1_number_string, 'proxy' => $phone1_proxy_string));
+        array_push($formattedHouseholdArray['beneficiaries']['phones'], array('type' => $types1String, 'prefix' => $phone1PrefixString, 'number' => $phone1NumberString, 'proxy' => $phone1ProxyString));
 
         if (key_exists('phone2_type', $formattedHouseholdArray['beneficiaries'])) {
-            $phone2_type_string = $formattedHouseholdArray['beneficiaries']['phone2_type'];
-            $phone2_prefix_string = $formattedHouseholdArray['beneficiaries']['phone2_prefix'];
-            $phone2_number_string = $formattedHouseholdArray['beneficiaries']['phone2_number'];
-            $phone2_proxy_string = $formattedHouseholdArray['beneficiaries']['phone2_proxy'];
+            $phone2TypeString = $formattedHouseholdArray['beneficiaries']['phone2_type'];
+            $phone2PrefixString = $formattedHouseholdArray['beneficiaries']['phone2_prefix'];
+            $phone2NumberString = $formattedHouseholdArray['beneficiaries']['phone2_number'];
+            $phone2ProxyString = $formattedHouseholdArray['beneficiaries']['phone2_proxy'];
 
-            $phone2_prefix_string = str_replace("'", '', $phone2_prefix_string);
-            $phone2_number_string = str_replace("'", '', $phone2_number_string);
+            $phone2PrefixString = str_replace("'", '', $phone2PrefixString);
+            $phone2NumberString = str_replace("'", '', $phone2NumberString);
 
-            array_push($formattedHouseholdArray['beneficiaries']['phones'], ['type' => $phone2_type_string, 'prefix' => $phone2_prefix_string, 'number' => $phone2_number_string, 'proxy' => $phone2_proxy_string]);
+            array_push($formattedHouseholdArray['beneficiaries']['phones'], ['type' => $phone2TypeString, 'prefix' => $phone2PrefixString, 'number' => $phone2NumberString, 'proxy' => $phone2ProxyString]);
         }
     }
     
@@ -366,11 +366,11 @@ class CSVToArrayMapper extends AbstractMapper
      */
     private function mapGender(&$formattedHouseholdArray)
     {
-        $gender_string = trim($formattedHouseholdArray['beneficiaries']['gender']);
+        $genderString = trim($formattedHouseholdArray['beneficiaries']['gender']);
 
-        if (strcasecmp(trim($gender_string), 'Male') === 0 || strcasecmp(trim($gender_string), 'M') === 0) {
+        if (strcasecmp(trim($genderString), 'Male') === 0 || strcasecmp(trim($genderString), 'M') === 0) {
             $formattedHouseholdArray['beneficiaries']['gender'] = 1;
-        } else if (strcasecmp(trim($gender_string), 'Female') === 0 || strcasecmp(trim($gender_string), 'F') === 0) {
+        } else if (strcasecmp(trim($genderString), 'Female') === 0 || strcasecmp(trim($genderString), 'F') === 0) {
             $formattedHouseholdArray['beneficiaries']['gender'] = 0;
         }
     }
@@ -382,11 +382,11 @@ class CSVToArrayMapper extends AbstractMapper
      */
     private function mapNationalIds(&$formattedHouseholdArray)
     {
-        $type_national_id = $formattedHouseholdArray['beneficiaries']['national_id_type'];
-        $national_id_string = $formattedHouseholdArray['beneficiaries']['national_id_number'];
+        $typeNationalId = $formattedHouseholdArray['beneficiaries']['national_id_type'];
+        $nationalIdString = $formattedHouseholdArray['beneficiaries']['national_id_number'];
         $formattedHouseholdArray['beneficiaries']['national_ids'] = [];
-        if ($national_id_string != '') {
-            $formattedHouseholdArray['beneficiaries']['national_ids'][] = ['id_type' => $type_national_id, 'id_number' => $national_id_string];
+        if ($nationalIdString != '') {
+            $formattedHouseholdArray['beneficiaries']['national_ids'][] = ['id_type' => $typeNationalId, 'id_number' => $nationalIdString];
         }
     }
 

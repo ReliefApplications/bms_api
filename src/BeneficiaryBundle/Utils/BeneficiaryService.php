@@ -172,8 +172,8 @@ class BeneficiaryService
         }
 
 
-        foreach ($beneficiaryArray["vulnerability_criteria"] as $vulnerability_criterion) {
-            $beneficiary->addVulnerabilityCriterion($this->getVulnerabilityCriterion($vulnerability_criterion["id"]));
+        foreach ($beneficiaryArray["vulnerability_criteria"] as $vulnerabilityCriterion) {
+            $beneficiary->addVulnerabilityCriterion($this->getVulnerabilityCriterion($vulnerabilityCriterion["id"]));
         }
         foreach ($beneficiaryArray["phones"] as $phoneArray) {
             if (!empty($phoneArray["type"]) && !empty($phoneArray["prefix"]) && !empty($phoneArray["number"])) {

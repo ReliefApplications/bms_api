@@ -353,9 +353,9 @@ class BMSServiceTestCase extends KernelTestCase
             "type" => 'number',
             "countryIso3" => $this->iso3
         ]);
-        $country_specific_answers = $this->bodyHousehold["country_specific_answers"];
+        $countrySpecificAnswers = $this->bodyHousehold["country_specific_answers"];
         $countrySpecificId = $countrySpecific->getId();
-        foreach ($country_specific_answers as $index => $c) {
+        foreach ($countrySpecificAnswers as $index => $c) {
             $this->bodyHousehold["country_specific_answers"][$index]["country_specific"] = ["id" => $countrySpecificId];
         }
 

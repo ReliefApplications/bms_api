@@ -78,19 +78,19 @@ class DataFillersProject
         try {
             $reference = $this->getReferenceId("BMS_Project_D");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue(1);
-                $new_value->setUnity($result['donor']);
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue(1);
+                $newValue->setUnity($result['donor']);
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
 
-                $new_reportingProject = new ReportingProject();
-                $new_reportingProject->setIndicator($reference);
-                $new_reportingProject->setValue($new_value);
-                $new_reportingProject->setProject($this->em->getRepository(Project::class)->find($result['project']));
+                $newReportingProject = new ReportingProject();
+                $newReportingProject->setIndicator($reference);
+                $newReportingProject->setValue($newValue);
+                $newReportingProject->setProject($this->em->getRepository(Project::class)->find($result['project']));
 
-                $this->em->persist($new_reportingProject);
+                $this->em->persist($newReportingProject);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -131,20 +131,20 @@ class DataFillersProject
             try {
                 $reference = $this->getReferenceId("BMSU_Project_NM");
                 foreach ($results as $result) {
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($result['value']);
-                    $new_value->setUnity('Men');
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($result['value']);
+                    $newValue->setUnity('Men');
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
-                    $new_reportingProject = new ReportingProject();
-                    $new_reportingProject->setIndicator($reference);
-                    $new_reportingProject->setValue($new_value);
-                    $new_reportingProject->setProject($project);
+                    $newReportingProject = new ReportingProject();
+                    $newReportingProject->setIndicator($reference);
+                    $newReportingProject->setValue($newValue);
+                    $newReportingProject->setProject($project);
 
-                    $this->em->persist($new_reportingProject);
+                    $this->em->persist($newReportingProject);
                     $this->em->flush();
                 }
                 $this->em->getConnection()->commit();
@@ -187,20 +187,20 @@ class DataFillersProject
             try {
                 $reference = $this->getReferenceId("BMSU_Project_NW");
                 foreach ($results as $result) {
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($result['value']);
-                    $new_value->setUnity('Women');
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($result['value']);
+                    $newValue->setUnity('Women');
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
-                    $new_reportingProject = new ReportingProject();
-                    $new_reportingProject->setIndicator($reference);
-                    $new_reportingProject->setValue($new_value);
-                    $new_reportingProject->setProject($project);
+                    $newReportingProject = new ReportingProject();
+                    $newReportingProject->setIndicator($reference);
+                    $newReportingProject->setValue($newValue);
+                    $newReportingProject->setProject($project);
 
-                    $this->em->persist($new_reportingProject);
+                    $this->em->persist($newReportingProject);
                     $this->em->flush();
                 }
                 $this->em->getConnection()->commit();
@@ -271,20 +271,20 @@ class DataFillersProject
                 $this->em->getConnection()->beginTransaction();
                 try {
                     $reference = $this->getReferenceId("BMSU_Project_TVSV");
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($byProjectByVulnerability['value']);
-                    $new_value->setUnity($byProjectByVulnerability['unity']);
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($byProjectByVulnerability['value']);
+                    $newValue->setUnity($byProjectByVulnerability['unity']);
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
-                    $new_reportingProject = new ReportingProject();
-                    $new_reportingProject->setIndicator($reference);
-                    $new_reportingProject->setValue($new_value);
-                    $new_reportingProject->setProject($project);
+                    $newReportingProject = new ReportingProject();
+                    $newReportingProject->setIndicator($reference);
+                    $newReportingProject->setValue($newValue);
+                    $newReportingProject->setProject($project);
 
-                    $this->em->persist($new_reportingProject);
+                    $this->em->persist($newReportingProject);
                     $this->em->flush();
                     
                     $this->em->getConnection()->commit();
@@ -336,20 +336,20 @@ class DataFillersProject
             try {
                 $reference = $this->getReferenceId("BMSU_Project_TVS");
                 foreach ($results as $result) {
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($result['value']);
-                    $new_value->setUnity('vulnerability served');
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($result['value']);
+                    $newValue->setUnity('vulnerability served');
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
-                    $new_reportingProject = new ReportingProject();
-                    $new_reportingProject->setIndicator($reference);
-                    $new_reportingProject->setValue($new_value);
-                    $new_reportingProject->setProject($project);
+                    $newReportingProject = new ReportingProject();
+                    $newReportingProject->setIndicator($reference);
+                    $newReportingProject->setValue($newValue);
+                    $newReportingProject->setProject($project);
 
-                    $this->em->persist($new_reportingProject);
+                    $this->em->persist($newReportingProject);
                     $this->em->flush();
                 }
                 $this->em->getConnection()->commit();
@@ -391,20 +391,20 @@ class DataFillersProject
             try {
                 $reference = $this->getReferenceId("BMS_Project_HS");
                 foreach ($results as $result) {
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($result['value']);
-                    $new_value->setUnity('households');
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($result['value']);
+                    $newValue->setUnity('households');
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
-                    $new_reportingProject = new ReportingProject();
-                    $new_reportingProject->setIndicator($reference);
-                    $new_reportingProject->setValue($new_value);
-                    $new_reportingProject->setProject($project);
+                    $newReportingProject = new ReportingProject();
+                    $newReportingProject->setIndicator($reference);
+                    $newReportingProject->setValue($newValue);
+                    $newReportingProject->setProject($project);
 
-                    $this->em->persist($new_reportingProject);
+                    $this->em->persist($newReportingProject);
                     $this->em->flush();
                 }
                 $this->em->getConnection()->commit();
@@ -438,20 +438,20 @@ class DataFillersProject
             try {
                 $reference = $this->getReferenceId("BMS_Project_HS");
                 foreach ($results as $result) {
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($result['value']/$result['target']*100);
-                    $new_value->setUnity('% beneficiaries');
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($result['value']/$result['target']*100);
+                    $newValue->setUnity('% beneficiaries');
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
-                    $new_reportingProject = new ReportingProject();
-                    $new_reportingProject->setIndicator($reference);
-                    $new_reportingProject->setValue($new_value);
-                    $new_reportingProject->setProject($project);
+                    $newReportingProject = new ReportingProject();
+                    $newReportingProject->setIndicator($reference);
+                    $newReportingProject->setValue($newValue);
+                    $newReportingProject->setProject($project);
 
-                    $this->em->persist($new_reportingProject);
+                    $this->em->persist($newReportingProject);
                     $this->em->flush();
                 }
                 $this->em->getConnection()->commit();
@@ -495,20 +495,20 @@ class DataFillersProject
                 try {
                     $reference = $this->getReferenceId("BMS_Project_AB");
 
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($ageBreakdown['value']);
-                    $new_value->setUnity($ageBreakdown['unity']);
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($ageBreakdown['value']);
+                    $newValue->setUnity($ageBreakdown['unity']);
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
-                    $new_reportingProject = new ReportingProject();
-                    $new_reportingProject->setIndicator($reference);
-                    $new_reportingProject->setValue($new_value);
-                    $new_reportingProject->setProject($project);
+                    $newReportingProject = new ReportingProject();
+                    $newReportingProject->setIndicator($reference);
+                    $newReportingProject->setValue($newValue);
+                    $newReportingProject->setProject($project);
 
-                    $this->em->persist($new_reportingProject);
+                    $this->em->persist($newReportingProject);
                     $this->em->flush();
                     $this->em->getConnection()->commit();
                 } catch (Exception $e) {

@@ -51,13 +51,13 @@ class LocationFixtures extends Fixture
     {
         $manager->getConnection()->getConfiguration()->setSQLLogger(null);
         
-        $dir_root = $this->kernel->getRootDir();
-        $dir_files = $dir_root . '/../src/CommonBundle/DataFixtures/LocationFiles';
-        if (!is_dir($dir_files)) {
+        $dirRoot = $this->kernel->getRootDir();
+        $dirFiles = $dirRoot . '/../src/CommonBundle/DataFixtures/LocationFiles';
+        if (!is_dir($dirFiles)) {
             return true;
         }
 
-        $files = scandir($dir_files);
+        $files = scandir($dirFiles);
         $nbFilesLoaded = 0;
 
         foreach ($files as $file) {
@@ -67,7 +67,7 @@ class LocationFixtures extends Fixture
 
             print_r("\n\nFILE : $file \n");
             $reader = new Xls();
-            $spreadSheet = $reader->load($dir_files . "/" . $file);
+            $spreadSheet = $reader->load($dirFiles . "/" . $file);
             $iso3 = strtoupper(current(explode("_", $file)));
             $countSheets = $spreadSheet->getSheetCount();
             $sheet = $spreadSheet->getSheet($countSheets - 1);

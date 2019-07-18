@@ -105,17 +105,17 @@ class ReportingService
                     }
                 }
             }
-            $values_rows = [];
+            $valuesRows = [];
             foreach ($labelsColumn as $indicatorLabel) {
-                $value_row = [$indicatorLabel];
+                $valueRow = [$indicatorLabel];
                 foreach ($periodColumns as $period => $values) {
                     // If the label don't have a value in this period, cell will be blank
-                    $value_row[] = (array_key_exists($indicatorLabel, $values)? $values[$indicatorLabel]: '');
+                    $valueRow[] = (array_key_exists($indicatorLabel, $values)? $values[$indicatorLabel]: '');
                 }
-                $values_rows[] = $value_row;
+                $valuesRows[] = $valueRow;
             }
             // Concatenate the indicator title, periods, values and a blank line
-            $indicatorTable = array_merge([[$indicator->getReference()]], [$periodRow], $values_rows, [['']]);
+            $indicatorTable = array_merge([[$indicator->getReference()]], [$periodRow], $valuesRows, [['']]);
             $indicatorsTable = array_merge($indicatorsTable, $indicatorTable);
         }
         return $this->container->get('export_csv_service')->exportRaw($indicatorsTable, 'reporting', $type);

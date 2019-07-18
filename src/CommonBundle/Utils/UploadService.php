@@ -22,9 +22,9 @@ class UploadService implements ContainerAwareInterface
     private $container;
     private $s3;
  
-    protected $aws_access_key_id;
-    protected $aws_secret_access_key;
-    protected $aws_s3_region;
+    protected $awsAccessKeyId;
+    protected $awsSecretAccessKey;
+    protected $awsS3Region;
 
 
     /**
@@ -36,23 +36,23 @@ class UploadService implements ContainerAwareInterface
     }
  
     /**
-     * @param $aws_access_key_id
-     * @param $aws_secret_access_key
+     * @param $awsAccessKeyId
+     * @param $awsSecretAccessKey
      */
-    public function __construct($aws_access_key_id, $aws_secret_access_key, $aws_s3_region, ContainerInterface $container)
+    public function __construct($awsAccessKeyId, $awsSecretAccessKey, $awsS3Region, ContainerInterface $container)
     {
         $this->container = $container;
 
         $credentials = new Credentials(
-            $aws_access_key_id,
-            $aws_secret_access_key
+            $awsAccessKeyId,
+            $awsSecretAccessKey
         );
  
         // Instantiate the S3 client with your AWS credentials
         $s3 = S3Client::factory(array(
             'credentials' => $credentials,
             'version' => 'latest', //@TODO: not this in production
-            'region' => $aws_s3_region
+            'region' => $awsS3Region
         ));
  
         $this->s3 = $s3;

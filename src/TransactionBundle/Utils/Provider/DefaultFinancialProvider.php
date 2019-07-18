@@ -244,15 +244,15 @@ abstract class DefaultFinancialProvider
      */
     public function recordTransaction(DistributionData $distributionData, array $data)
     {
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (! is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (! is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $file_record = $dir_var . '/record_' . $distributionData->getId() . '.csv';
+        $fileRecord = $dirVar . '/record_' . $distributionData->getId() . '.csv';
 
-        $fp = fopen($file_record, 'a');
-        if (!file_get_contents($file_record)) {
+        $fp = fopen($fileRecord, 'a');
+        if (!file_get_contents($fileRecord)) {
             fputcsv($fp, array('FROM', 'DATE', 'URL', 'HTTP CODE', 'RESPONSE', 'ERROR', 'PARAMETERS'), ';');
         }
 

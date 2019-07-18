@@ -33,16 +33,16 @@ class LessTreatment extends AbstractTreatment
             $this->updateInCache($householdArray['id_tmp_cache'], $householdArray['new'], $email);
         }
         
-        $to_update = $this->getFromCache('to_update', $email);
-        if (! $to_update) {
-            $to_update = [];
+        $toUpdate = $this->getFromCache('to_update', $email);
+        if (! $toUpdate) {
+            $toUpdate = [];
         }
-        $to_create = $this->getFromCache('to_create', $email);
-        if (! $to_create) {
-            $to_create = [];
+        $toCreate = $this->getFromCache('to_create', $email);
+        if (! $toCreate) {
+            $toCreate = [];
         }
 
         // to preserve values with the same key
-        return array_unique(array_merge($to_update, $to_create), SORT_REGULAR);
+        return array_unique(array_merge($toUpdate, $toCreate), SORT_REGULAR);
     }
 }

@@ -253,17 +253,17 @@ class HouseholdService
         }
         
         if (!empty($householdArray["country_specific_answers"])) {
-            foreach ($householdArray["country_specific_answers"] as $country_specific_answer) {
-                $this->addOrUpdateCountrySpecific($household, $country_specific_answer, false);
+            foreach ($householdArray["country_specific_answers"] as $countrySpecificAnswer) {
+                $this->addOrUpdateCountrySpecific($household, $countrySpecificAnswer, false);
             }
         }
         
         if ($flush) {
             $this->em->flush();
             $household = $this->em->getRepository(Household::class)->find($household->getId());
-            $country_specific_answers = $this->em->getRepository(CountrySpecificAnswer::class)->findByHousehold($household);
-            foreach ($country_specific_answers as $country_specific_answer) {
-                $household->addCountrySpecificAnswer($country_specific_answer);
+            $countrySpecificAnswers = $this->em->getRepository(CountrySpecificAnswer::class)->findByHousehold($household);
+            foreach ($countrySpecificAnswers as $countrySpecificAnswer) {
+                $household->addCountrySpecificAnswer($countrySpecificAnswer);
             }
         }
 

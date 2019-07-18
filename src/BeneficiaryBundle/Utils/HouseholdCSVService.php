@@ -297,10 +297,10 @@ class HouseholdCSVService
             return true;
         }
 
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_token = $dir_root . '/../var/data/token_state';
-        if (is_file($dir_token)) {
-            $tokensState = json_decode(file_get_contents($dir_token), true);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirToken = $dirRoot . '/../var/data/token_state';
+        if (is_file($dirToken)) {
+            $tokensState = json_decode(file_get_contents($dirToken), true);
             if (! array_key_exists($this->token, $tokensState)) {
                 return false;
             }
@@ -333,14 +333,14 @@ class HouseholdCSVService
      */
     private function updateTokenState()
     {
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (!is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (!is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $dir_file = $dir_var . '/token_state';
-        if (is_file($dir_file)) {
-            $tokensState = json_decode(file_get_contents($dir_file), true);
+        $dirFile = $dirVar . '/token_state';
+        if (is_file($dirFile)) {
+            $tokensState = json_decode(file_get_contents($dirFile), true);
         } else {
             $tokensState = [];
         }
@@ -355,7 +355,7 @@ class HouseholdCSVService
             'step' => $this->step
         ];
 
-        file_put_contents($dir_var . '/token_state', json_encode($tokensState));
+        file_put_contents($dirVar . '/token_state', json_encode($tokensState));
     }
 
     /**
@@ -363,29 +363,29 @@ class HouseholdCSVService
      */
     private function clearExpiredSessions()
     {
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (!is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (!is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $dir_file = $dir_var . '/token_state';
-        if (is_file($dir_file)) {
-            $tokensState = json_decode(file_get_contents($dir_file), true);
+        $dirFile = $dirVar . '/token_state';
+        if (is_file($dirFile)) {
+            $tokensState = json_decode(file_get_contents($dirFile), true);
         } else {
-            $this->rrmdir($dir_var);
+            $this->rrmdir($dirVar);
             return;
         }
 
         foreach ($tokensState as $token => $item) {
             if ((new \DateTime())->getTimestamp() > $item['timestamp']) {
-                if (is_dir($dir_var . '/' . $token)) {
-                    $this->rrmdir($dir_var . '/' . $token);
+                if (is_dir($dirVar . '/' . $token)) {
+                    $this->rrmdir($dirVar . '/' . $token);
                 }
                 unset($tokensState[$token]);
             }
         }
 
-        file_put_contents($dir_var . '/token_state', json_encode($tokensState));
+        file_put_contents($dirVar . '/token_state', json_encode($tokensState));
     }
 
     /**
@@ -394,41 +394,41 @@ class HouseholdCSVService
      */
     private function clearCacheToken($token)
     {
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (!is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (!is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $dir_file = $dir_var . '/token_state';
-        if (is_file($dir_file)) {
-            $tokensState = json_decode(file_get_contents($dir_file), true);
+        $dirFile = $dirVar . '/token_state';
+        if (is_file($dirFile)) {
+            $tokensState = json_decode(file_get_contents($dirFile), true);
         } else {
-            $this->rrmdir($dir_var);
+            $this->rrmdir($dirVar);
             return;
         }
 
-        if (is_dir($dir_var . '/' . $token)) {
-            $this->rrmdir($dir_var . '/' . $token);
+        if (is_dir($dirVar . '/' . $token)) {
+            $this->rrmdir($dirVar . '/' . $token);
         }
         if (array_key_exists($token, $tokensState)) {
             unset($tokensState[$token]);
         }
 
-        file_put_contents($dir_var . '/token_state', json_encode($tokensState));
+        file_put_contents($dirVar . '/token_state', json_encode($tokensState));
     }
 
     private function getStepFromCache()
     {
         $step = 1;
 
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (!is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (!is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $dir_file = $dir_var . '/token_state';
-        if (is_file($dir_file)) {
-            $tokensState = json_decode(file_get_contents($dir_file), true);
+        $dirFile = $dirVar . '/token_state';
+        if (is_file($dirFile)) {
+            $tokensState = json_decode(file_get_contents($dirFile), true);
             if ($this->token && array_key_exists($this->token, $tokensState) && array_key_exists('step', $tokensState[$this->token])) {
                 $step = $tokensState[$this->token]['step'];
             }

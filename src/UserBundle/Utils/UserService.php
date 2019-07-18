@@ -415,15 +415,15 @@ class UserService
             $this->recordLog($user->getId(), $data);
         }
 
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (! is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (! is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $file_record = $dir_var . '/record_log-' . $user->getId() . '.csv';
+        $fileRecord = $dirVar . '/record_log-' . $user->getId() . '.csv';
 
 
-        if (is_file($file_record) && file_get_contents($file_record)) {
+        if (is_file($fileRecord) && file_get_contents($fileRecord)) {
             $message = (new \Swift_Message('Logs of ' . $user->getUsername()))
                 ->setFrom('admin@bmstaging.info')
                 ->setTo($emailConnected->getEmail())
@@ -437,7 +437,7 @@ class UserService
                     ),
                     'text/html'
                 );
-            $message->attach(\Swift_Attachment::fromPath($dir_root . '/../var/data/record_log-' . $user->getId() . '.csv')->setFilename('logs-'. $user->getEmail() .'.csv'));
+            $message->attach(\Swift_Attachment::fromPath($dirRoot . '/../var/data/record_log-' . $user->getId() . '.csv')->setFilename('logs-'. $user->getEmail() .'.csv'));
         } else {
             $message = (new \Swift_Message('Logs of ' . $user->getUsername()))
                 ->setFrom('admin@bmstaging.info')
@@ -460,8 +460,8 @@ class UserService
         $spool = $transport->getSpool();
         $spool->flushQueue($this->container->get('swiftmailer.transport.real'));
 
-        if (is_file($file_record) && file_get_contents($file_record)) {
-            unlink($file_record);
+        if (is_file($fileRecord) && file_get_contents($fileRecord)) {
+            unlink($fileRecord);
         }
     }
 
@@ -473,15 +473,15 @@ class UserService
      */
     public function recordLog(int $idUser, array $data)
     {
-        $dir_root = $this->container->get('kernel')->getRootDir();
-        $dir_var = $dir_root . '/../var/data';
-        if (! is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirRoot = $this->container->get('kernel')->getRootDir();
+        $dirVar = $dirRoot . '/../var/data';
+        if (! is_dir($dirVar)) {
+            mkdir($dirVar);
         }
-        $file_record = $dir_var . '/record_log-' . $idUser . '.csv';
+        $fileRecord = $dirVar . '/record_log-' . $idUser . '.csv';
 
-        $fp = fopen($file_record, 'a');
-        if (!file_get_contents($file_record)) {
+        $fp = fopen($fileRecord, 'a');
+        if (!file_get_contents($fileRecord)) {
             fputcsv($fp, array('URL', 'ID user', 'Email user', 'Method', 'Date', 'HTTP Status', 'Controller called', 'Request parameters'), ";");
         }
 

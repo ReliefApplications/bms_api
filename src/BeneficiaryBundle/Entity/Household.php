@@ -60,7 +60,7 @@ class Household
 
     /**
      * First row with data
-     * @var int $first_row
+     * @var int $firstRow
      */
     const firstRow = 6;
 

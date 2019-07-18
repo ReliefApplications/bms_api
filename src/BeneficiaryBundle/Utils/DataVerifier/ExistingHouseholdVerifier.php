@@ -93,26 +93,26 @@ class ExistingHouseholdVerifier extends AbstractVerifier
             $this->token = bin2hex(random_bytes($sizeToken));
         }
 
-        $dir_root = $this->container->get('kernel')->getRootDir();
+        $dirRoot = $this->container->get('kernel')->getRootDir();
 
-        $dir_var = $dir_root . '/../var/data';
-        if (!is_dir($dir_var)) {
-            mkdir($dir_var);
+        $dirVar = $dirRoot . '/../var/data';
+        if (!is_dir($dirVar)) {
+            mkdir($dirVar);
         }
 
-        $dir_var_token = $dir_var . '/' . $this->token;
-        if (!is_dir($dir_var_token)) {
-            mkdir($dir_var_token);
+        $dirVarToken = $dirVar . '/' . $this->token;
+        if (!is_dir($dirVarToken)) {
+            mkdir($dirVarToken);
         }
 
-        $dir_var = $dir_var_token . '/' . $email . '-' . $step;
-        if (is_file($dir_var)) {
-            $listHH = json_decode(file_get_contents($dir_var), true);
+        $dirVar = $dirVarToken . '/' . $email . '-' . $step;
+        if (is_file($dirVar)) {
+            $listHH = json_decode(file_get_contents($dirVar), true);
         } else {
             $listHH = [];
         }
 
         $listHH[$cacheId] = ['new' => $dataToSave, 'old' => $arrayOldHousehold, 'id_tmp_cache' => $cacheId];
-        file_put_contents($dir_var, json_encode($listHH));
+        file_put_contents($dirVar, json_encode($listHH));
     }
 }

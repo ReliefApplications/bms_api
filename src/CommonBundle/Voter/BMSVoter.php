@@ -41,13 +41,13 @@ abstract class BMSVoter extends Voter
     }
 
     /**
-     * @param array $my_roles
+     * @param array $myRoles
      * @return array|\Symfony\Component\Security\Core\Role\RoleInterface[]
      */
-    protected function getMyReachableRoles(array $my_roles)
+    protected function getMyReachableRoles(array $myRoles)
     {
         $arrayRoles = [];
-        foreach ($my_roles as $role) {
+        foreach ($myRoles as $role) {
             $arrayRoles[] = new Role($role);
         }
         return $this->roleHierarchy->getReachableRoles($arrayRoles);

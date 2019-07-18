@@ -71,23 +71,23 @@ class DataFillersDistribution extends DataFillers
             $results = $qb->getQuery()->getArrayResult();
             $reference = $this->getReferenceId("BMS_Distribution_NEB");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('enrolled beneficiaries');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('enrolled beneficiaries');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
                 $this->repository = $this->em->getRepository(DistributionData::class);
                 $distribution = $this->repository->findOneBy(['id' => $result['distribution']]);
 
-                $new_reportingDistribution = new ReportingDistribution();
-                $new_reportingDistribution->setIndicator($reference);
-                $new_reportingDistribution->setValue($new_value);
-                $new_reportingDistribution->setDistribution($distribution);
+                $newReportingDistribution = new ReportingDistribution();
+                $newReportingDistribution->setIndicator($reference);
+                $newReportingDistribution->setValue($newValue);
+                $newReportingDistribution->setDistribution($distribution);
 
-                $this->em->persist($new_reportingDistribution);
+                $this->em->persist($newReportingDistribution);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -128,23 +128,23 @@ class DataFillersDistribution extends DataFillers
             }
             $reference = $this->getReferenceId("BMS_Distribution_TDV");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity($result['unity']);
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity($result['unity']);
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
                 $this->repository = $this->em->getRepository(DistributionData::class);
                 $distribution = $this->repository->findOneBy(['id' => $result['distribution']]);
 
-                $new_reportingDistribution = new ReportingDistribution();
-                $new_reportingDistribution->setIndicator($reference);
-                $new_reportingDistribution->setValue($new_value);
-                $new_reportingDistribution->setDistribution($distribution);
+                $newReportingDistribution = new ReportingDistribution();
+                $newReportingDistribution->setIndicator($reference);
+                $newReportingDistribution->setValue($newValue);
+                $newReportingDistribution->setDistribution($distribution);
 
-                $this->em->persist($new_reportingDistribution);
+                $this->em->persist($newReportingDistribution);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -170,23 +170,23 @@ class DataFillersDistribution extends DataFillers
             $results = $qb->getQuery()->getArrayResult();
             $reference = $this->getReferenceId("BMS_Distribution_M");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('modality');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('modality');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
                 $this->repository = $this->em->getRepository(DistributionData::class);
                 $distribution = $this->repository->findOneBy(['id' => $result['distribution']]);
 
-                $new_reportingDistribution = new ReportingDistribution();
-                $new_reportingDistribution->setIndicator($reference);
-                $new_reportingDistribution->setValue($new_value);
-                $new_reportingDistribution->setDistribution($distribution);
+                $newReportingDistribution = new ReportingDistribution();
+                $newReportingDistribution->setIndicator($reference);
+                $newReportingDistribution->setValue($newValue);
+                $newReportingDistribution->setDistribution($distribution);
 
-                $this->em->persist($new_reportingDistribution);
+                $this->em->persist($newReportingDistribution);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -236,23 +236,23 @@ class DataFillersDistribution extends DataFillers
                 $this->em->getConnection()->beginTransaction();
                 try {
                     $reference = $this->getReferenceId("BMS_Distribution_AB");
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($ageBreakdown['value']);
-                    $new_value->setUnity($ageBreakdown['unity']);
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($ageBreakdown['value']);
+                    $newValue->setUnity($ageBreakdown['unity']);
+                    $newValue->setCreationDate(new \DateTime());
 
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
 
                     $this->repository = $this->em->getRepository(DistributionData::class);
                     $distribution = $this->repository->findOneBy(['id' => $results[0][0]['distribution']]);
 
-                    $new_reportingDistribution = new ReportingDistribution();
-                    $new_reportingDistribution->setIndicator($reference);
-                    $new_reportingDistribution->setValue($new_value);
-                    $new_reportingDistribution->setDistribution($distribution);
+                    $newReportingDistribution = new ReportingDistribution();
+                    $newReportingDistribution->setIndicator($reference);
+                    $newReportingDistribution->setValue($newValue);
+                    $newReportingDistribution->setDistribution($distribution);
 
-                    $this->em->persist($new_reportingDistribution);
+                    $this->em->persist($newReportingDistribution);
                     $this->em->flush();
                     $this->em->getConnection()->commit();
                 } catch (Exception $e) {
@@ -281,23 +281,23 @@ class DataFillersDistribution extends DataFillers
             $results = $qb->getQuery()->getArrayResult();
             $reference = $this->getReferenceId("BMSU_Distribution_NM");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('Men');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('Men');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
                 $this->repository = $this->em->getRepository(DistributionData::class);
                 $distribution = $this->repository->findOneBy(['id' => $result['distribution']]);
 
-                $new_reportingDistribution = new ReportingDistribution();
-                $new_reportingDistribution->setIndicator($reference);
-                $new_reportingDistribution->setValue($new_value);
-                $new_reportingDistribution->setDistribution($distribution);
+                $newReportingDistribution = new ReportingDistribution();
+                $newReportingDistribution->setIndicator($reference);
+                $newReportingDistribution->setValue($newValue);
+                $newReportingDistribution->setDistribution($distribution);
 
-                $this->em->persist($new_reportingDistribution);
+                $this->em->persist($newReportingDistribution);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -325,23 +325,23 @@ class DataFillersDistribution extends DataFillers
             $results = $qb->getQuery()->getArrayResult();
             $reference = $this->getReferenceId("BMSU_Distribution_NW");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('Women');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('Women');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
                 $this->repository = $this->em->getRepository(DistributionData::class);
                 $distribution = $this->repository->findOneBy(['id' => $result['distribution']]);
 
-                $new_reportingDistribution = new ReportingDistribution();
-                $new_reportingDistribution->setIndicator($reference);
-                $new_reportingDistribution->setValue($new_value);
-                $new_reportingDistribution->setDistribution($distribution);
+                $newReportingDistribution = new ReportingDistribution();
+                $newReportingDistribution->setIndicator($reference);
+                $newReportingDistribution->setValue($newValue);
+                $newReportingDistribution->setDistribution($distribution);
 
-                $this->em->persist($new_reportingDistribution);
+                $this->em->persist($newReportingDistribution);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -406,23 +406,23 @@ class DataFillersDistribution extends DataFillers
             try {
                 $reference = $this->getReferenceId("BMSU_Distribution_TVS");
                 foreach ($results as $result) {
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($result['value']);
-                    $new_value->setUnity('vulnerability served');
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($result['value']);
+                    $newValue->setUnity('vulnerability served');
+                    $newValue->setCreationDate(new \DateTime());
     
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
     
                     $this->repository = $this->em->getRepository(DistributionData::class);
                     $distribution = $this->repository->findOneBy(['id' => $result['distribution']]);
     
-                    $new_reportingDistribution = new ReportingDistribution();
-                    $new_reportingDistribution->setIndicator($reference);
-                    $new_reportingDistribution->setValue($new_value);
-                    $new_reportingDistribution->setDistribution($distribution);
+                    $newReportingDistribution = new ReportingDistribution();
+                    $newReportingDistribution->setIndicator($reference);
+                    $newReportingDistribution->setValue($newValue);
+                    $newReportingDistribution->setDistribution($distribution);
     
-                    $this->em->persist($new_reportingDistribution);
+                    $this->em->persist($newReportingDistribution);
                     $this->em->flush();
                 }
                 $this->em->getConnection()->commit();
@@ -505,23 +505,23 @@ class DataFillersDistribution extends DataFillers
             try {
                 $reference = $this->getReferenceId("BMSU_Distribution_TVSV");
                 foreach ($byDistribution as $result) {
-                    $new_value = new ReportingValue();
-                    $new_value->setValue($result['value']);
-                    $new_value->setUnity($result['unity']);
-                    $new_value->setCreationDate(new \DateTime());
+                    $newValue = new ReportingValue();
+                    $newValue->setValue($result['value']);
+                    $newValue->setUnity($result['unity']);
+                    $newValue->setCreationDate(new \DateTime());
     
-                    $this->em->persist($new_value);
+                    $this->em->persist($newValue);
                     $this->em->flush();
     
                     $this->repository = $this->em->getRepository(DistributionData::class);
                     $distribution = $this->repository->findOneBy(['id' => $result['distribution']]);
     
-                    $new_reportingDistribution = new ReportingDistribution();
-                    $new_reportingDistribution->setIndicator($reference);
-                    $new_reportingDistribution->setValue($new_value);
-                    $new_reportingDistribution->setDistribution($distribution);
+                    $newReportingDistribution = new ReportingDistribution();
+                    $newReportingDistribution->setIndicator($reference);
+                    $newReportingDistribution->setValue($newValue);
+                    $newReportingDistribution->setDistribution($distribution);
     
-                    $this->em->persist($new_reportingDistribution);
+                    $this->em->persist($newReportingDistribution);
                     $this->em->flush();
                 }
                 $this->em->getConnection()->commit();

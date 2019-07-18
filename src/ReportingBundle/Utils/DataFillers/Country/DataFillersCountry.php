@@ -74,20 +74,20 @@ class DataFillersCountry extends DataFillers
             $results = $this->sortByCountry($qb->getQuery()->getArrayResult());
             $reference = $this->getReferenceId("BMS_Country_TH");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('household');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('household');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
-                $new_reportingCountry = new ReportingCountry();
-                $new_reportingCountry->setIndicator($reference);
-                $new_reportingCountry->setValue($new_value);
-                $new_reportingCountry->setcountry($result['country']);
+                $newReportingCountry = new ReportingCountry();
+                $newReportingCountry->setIndicator($reference);
+                $newReportingCountry->setValue($newValue);
+                $newReportingCountry->setcountry($result['country']);
 
-                $this->em->persist($new_reportingCountry);
+                $this->em->persist($newReportingCountry);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -113,20 +113,20 @@ class DataFillersCountry extends DataFillers
 
             $reference = $this->getReferenceId("BMS_Country_AP");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('active project');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('active project');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
-                $new_reportingCountry = new ReportingCountry();
-                $new_reportingCountry->setIndicator($reference);
-                $new_reportingCountry->setValue($new_value);
-                $new_reportingCountry->setcountry($result['country']);
+                $newReportingCountry = new ReportingCountry();
+                $newReportingCountry->setIndicator($reference);
+                $newReportingCountry->setValue($newValue);
+                $newReportingCountry->setcountry($result['country']);
 
-                $this->em->persist($new_reportingCountry);
+                $this->em->persist($newReportingCountry);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -155,20 +155,20 @@ class DataFillersCountry extends DataFillers
             $results = $this->sortByCountry($qb->getQuery()->getArrayResult());
             $reference = $this->getReferenceId("BMS_Country_EB");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('enrolled beneficiary');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('enrolled beneficiary');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
-                $new_reportingCountry = new ReportingCountry();
-                $new_reportingCountry->setIndicator($reference);
-                $new_reportingCountry->setValue($new_value);
-                $new_reportingCountry->setcountry($result['country']);
+                $newReportingCountry = new ReportingCountry();
+                $newReportingCountry->setIndicator($reference);
+                $newReportingCountry->setValue($newValue);
+                $newReportingCountry->setcountry($result['country']);
 
-                $this->em->persist($new_reportingCountry);
+                $this->em->persist($newReportingCountry);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -196,20 +196,20 @@ class DataFillersCountry extends DataFillers
             $results = $this->sortByCountry($qb->getQuery()->getArrayResult());
             $reference = $this->getReferenceId("BMS_Country_TND");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('distributions');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('distributions');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
-                $new_reportingCountry = new ReportingCountry();
-                $new_reportingCountry->setIndicator($reference);
-                $new_reportingCountry->setValue($new_value);
-                $new_reportingCountry->setcountry($result['country']);
+                $newReportingCountry = new ReportingCountry();
+                $newReportingCountry->setIndicator($reference);
+                $newReportingCountry->setValue($newValue);
+                $newReportingCountry->setcountry($result['country']);
 
-                $this->em->persist($new_reportingCountry);
+                $this->em->persist($newReportingCountry);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();
@@ -234,20 +234,20 @@ class DataFillersCountry extends DataFillers
             $results = $qb->getQuery()->getArrayResult();
             $reference = $this->getReferenceId("BMS_Country_TTC");
             foreach ($results as $result) {
-                $new_value = new ReportingValue();
-                $new_value->setValue($result['value']);
-                $new_value->setUnity('transactions completed');
-                $new_value->setCreationDate(new \DateTime());
+                $newValue = new ReportingValue();
+                $newValue->setValue($result['value']);
+                $newValue->setUnity('transactions completed');
+                $newValue->setCreationDate(new \DateTime());
 
-                $this->em->persist($new_value);
+                $this->em->persist($newValue);
                 $this->em->flush();
 
-                $new_reportingCountry = new ReportingCountry();
-                $new_reportingCountry->setIndicator($reference);
-                $new_reportingCountry->setValue($new_value);
-                $new_reportingCountry->setcountry('KHM');
+                $newReportingCountry = new ReportingCountry();
+                $newReportingCountry->setIndicator($reference);
+                $newReportingCountry->setValue($newValue);
+                $newReportingCountry->setcountry('KHM');
 
-                $this->em->persist($new_reportingCountry);
+                $this->em->persist($newReportingCountry);
                 $this->em->flush();
             }
             $this->em->getConnection()->commit();

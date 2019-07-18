@@ -55,14 +55,14 @@ abstract class AbstractTreatment implements InterfaceTreatment
             $this->token = bin2hex(random_bytes($sizeToken));
         }
 
-        $dir_root = $this->container->get('kernel')->getRootDir();
+        $dirRoot = $this->container->get('kernel')->getRootDir();
         
-        $dir_var_token = $dir_root . '/../var/data/' . $this->token;
-        if (!is_dir($dir_var_token)) {
-            mkdir($dir_var_token);
+        $dirVarToken = $dirRoot . '/../var/data/' . $this->token;
+        if (!is_dir($dirVarToken)) {
+            mkdir($dirVarToken);
         }
         
-        return $dir_var_token;
+        return $dirVarToken;
     }
     
     /**
@@ -74,15 +74,15 @@ abstract class AbstractTreatment implements InterfaceTreatment
      */
     protected function updateInCache(int $idCache, array $newData, string $email, $oldData = null)
     {
-        $dir_var_token = $this->getDirectory(true);
-        if (empty($dir_var_token)) {
+        $dirVarToken = $this->getDirectory(true);
+        if (empty($dirVarToken)) {
             return;
         }
 
         // Update cache
-        $dir_file_update = $dir_var_token . '/' . $email . '-to_update';
-        if (is_file($dir_file_update)) {
-            $listHHUpdate = json_decode(file_get_contents($dir_file_update), true);
+        $dirFileUpdate = $dirVarToken . '/' . $email . '-to_update';
+        if (is_file($dirFileUpdate)) {
+            $listHHUpdate = json_decode(file_get_contents($dirFileUpdate), true);
         } else {
             $listHHUpdate = [];
         }
@@ -91,14 +91,14 @@ abstract class AbstractTreatment implements InterfaceTreatment
             $listHHUpdate[$idCache]['new'] = $newData;
             // update only if there is data in old
             $listHHUpdate[$idCache]['old'] = $oldData ? $oldData : $listHHUpdate[$idCache]['old'];
-            file_put_contents($dir_file_update, json_encode($listHHUpdate));
+            file_put_contents($dirFileUpdate, json_encode($listHHUpdate));
             return;
         }
         
         // Create cache
-        $dir_file_create = $dir_var_token . '/' . $email . '-to_create';
-        if (is_file($dir_file_create)) {
-            $listHHCreate = json_decode(file_get_contents($dir_file_create), true);
+        $dirFileCreate = $dirVarToken . '/' . $email . '-to_create';
+        if (is_file($dirFileCreate)) {
+            $listHHCreate = json_decode(file_get_contents($dirFileCreate), true);
         } else {
             $listHHCreate = [];
         }
@@ -107,7 +107,7 @@ abstract class AbstractTreatment implements InterfaceTreatment
             $listHHCreate[$idCache]['new'] = $newData;
             // update only if there is data in old
             $listHHCreate[$idCache]['old'] = $oldData ? $oldData : $listHHCreate[$idCache]['old'];
-            file_put_contents($dir_file_create, json_encode($listHHCreate));
+            file_put_contents($dirFileCreate, json_encode($listHHCreate));
             return;
         }
     }
@@ -120,14 +120,14 @@ abstract class AbstractTreatment implements InterfaceTreatment
      */
     protected function getItemFromCache(string $step, $idCache, string $email)
     {
-        $dir_var_token = $this->getDirectory(true);
-        if (empty($dir_var_token)) {
+        $dirVarToken = $this->getDirectory(true);
+        if (empty($dirVarToken)) {
             return;
         }
 
-        $dir_file = $dir_var_token . '/' . $email . '-' . $step;
-        if (is_file($dir_file)) {
-            $listHH = json_decode(file_get_contents($dir_file), true);
+        $dirFile = $dirVarToken . '/' . $email . '-' . $step;
+        if (is_file($dirFile)) {
+            $listHH = json_decode(file_get_contents($dirFile), true);
         } else {
             $listHH = [];
         }
@@ -148,19 +148,19 @@ abstract class AbstractTreatment implements InterfaceTreatment
      */
     protected function saveInCache(string $step, $cacheId, array $newData, string $email, array $oldData)
     {
-        $dir_var_token = $this->getDirectory();
-        if (empty($dir_var_token)) {
+        $dirVarToken = $this->getDirectory();
+        if (empty($dirVarToken)) {
             return;
         }
 
-        if (is_file($dir_var_token . '/' . $email . '-' . $step)) {
-            $listHH = json_decode(file_get_contents($dir_var_token . '/' . $email . '-' . $step), true);
+        if (is_file($dirVarToken . '/' . $email . '-' . $step)) {
+            $listHH = json_decode(file_get_contents($dirVarToken . '/' . $email . '-' . $step), true);
         } else {
             $listHH = [];
         }
 
         $listHH[$cacheId] = ['new' => $newData, 'old' => $oldData, 'id_tmp_cache' => $cacheId];
-        file_put_contents($dir_var_token . '/' . $email . '-' . $step, json_encode($listHH));
+        file_put_contents($dirVarToken . '/' . $email . '-' . $step, json_encode($listHH));
     }
 
     /**
@@ -170,17 +170,17 @@ abstract class AbstractTreatment implements InterfaceTreatment
      */
     protected function getFromCache(string $step, string $email)
     {
-        $dir_var_token = $this->getDirectory(true);
-        if (empty($dir_var_token)) {
+        $dirVarToken = $this->getDirectory(true);
+        if (empty($dirVarToken)) {
             return;
         }
         
-        $dir_file = $dir_var_token . '/' . $email . '-' . $step;
-        if (!is_file($dir_file)) {
+        $dirFile = $dirVarToken . '/' . $email . '-' . $step;
+        if (!is_file($dirFile)) {
             return;
         }
         
-        return json_decode(file_get_contents($dir_file), true);
+        return json_decode(file_get_contents($dirFile), true);
     }
 
     /**

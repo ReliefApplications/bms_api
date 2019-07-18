@@ -22,7 +22,7 @@ class KHMFinancialProvider extends DefaultFinancialProvider
      * @var string
      */
     protected $url = "https://stageonline.wingmoney.com:8443/RestEngine";
-    protected $url_prod = "https://hir.wingmoney.com:8443/RestServer";
+    protected $urlProd = "https://hir.wingmoney.com:8443/RestServer";
     /**
      * @var string
      */
@@ -160,15 +160,15 @@ class KHMFinancialProvider extends DefaultFinancialProvider
     /**
      * Get status of transaction
      * @param DistributionData $distributionData
-     * @param  string $transaction_id
+     * @param  string $transactionId
      * @return object
      * @throws \Exception
      */
-    public function getStatus(DistributionData $distributionData, string $transaction_id)
+    public function getStatus(DistributionData $distributionData, string $transactionId)
     {
         $route = "/api/v1/sendmoney/nonwing/txn_inquiry";
         $body = array(
-            "transaction_id" => $transaction_id
+            "transaction_id" => $transactionId
         );
         
         try {
@@ -210,7 +210,7 @@ class KHMFinancialProvider extends DefaultFinancialProvider
                 
         curl_setopt_array($curl, array(
           CURLOPT_PORT           => "8443",
-          CURLOPT_URL            => ($this->username === 'peopleinneed' ? $this->url_prod : $this->url) . $route,
+          CURLOPT_URL            => ($this->username === 'peopleinneed' ? $this->urlProd : $this->url) . $route,
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING       => "",
           CURLOPT_MAXREDIRS      => 10,

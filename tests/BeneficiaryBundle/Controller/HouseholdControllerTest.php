@@ -50,9 +50,9 @@ class HouseholdControllerTest extends BMSServiceTestCase
             $householdLocation = $household["household_locations"][0];
             $this->assertArrayHasKey('type', $householdLocation);
             $this->assertArrayHasKey('location_group', $householdLocation);
-            $country_specific_answer = current($household["country_specific_answers"]);
-            $this->assertArrayHasKey('answer', $country_specific_answer);
-            $this->assertArrayHasKey('country_specific', $country_specific_answer);
+            $countrySpecificAnswer = current($household["country_specific_answers"]);
+            $this->assertArrayHasKey('answer', $countrySpecificAnswer);
+            $this->assertArrayHasKey('country_specific', $countrySpecificAnswer);
         } catch (\Exception $exception) {
             $this->removeHousehold($this->namefullnameHousehold);
             $this->fail("\nThe mapping of fields of Household entity is not correct (1).\n");
@@ -128,9 +128,9 @@ class HouseholdControllerTest extends BMSServiceTestCase
                 $this->assertArrayHasKey('local_given_name', $beneficiary);
                 $this->assertArrayHasKey('local_family_name', $beneficiary);
                 $this->assertArrayHasKey('vulnerability_criteria', $beneficiary);
-                $vulnerability_criterion = current($beneficiary["vulnerability_criteria"]);
-                $this->assertArrayHasKey('id', $vulnerability_criterion);
-                $this->assertArrayHasKey('field_string', $vulnerability_criterion);
+                $vulnerabilityCriterion = current($beneficiary["vulnerability_criteria"]);
+                $this->assertArrayHasKey('id', $vulnerabilityCriterion);
+                $this->assertArrayHasKey('field_string', $vulnerabilityCriterion);
             } catch (\Exception $exception) {
                 $this->removeHousehold($this->namefullnameHousehold . '(u)');
                 $this->fail("\nThe mapping of fields of Household entity is not correct (3).\n");

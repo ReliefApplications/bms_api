@@ -805,16 +805,16 @@ class Beneficiary implements ExportableInterface
     public function getCommonExportFields()
     {
 
-        $referral_type = null;
-        $referral_comment = null;
+        $referralType = null;
+        $referralComment = null;
         if ($this->getReferral()) {
-            $referral_type = $this->getReferral()->getType();
-            $referral_comment = $this->getReferral()->getComment();
+            $referralType = $this->getReferral()->getType();
+            $referralComment = $this->getReferral()->getComment();
         }
 
         $referralInfo = [
-            "Referral Type" => $referral_type ? Referral::REFERRALTYPES[$referral_type] : null,
-            "Referral Comment" => $referral_comment
+            "Referral Type" => $referralType ? Referral::REFERRALTYPES[$referralType] : null,
+            "Referral Comment" => $referralComment
         ];
 
         return array_merge($this->getCommonHouseholdExportFields(), $this->getCommonBeneficiaryExportFields(), $referralInfo);

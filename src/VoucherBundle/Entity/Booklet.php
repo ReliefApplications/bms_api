@@ -82,7 +82,7 @@ class Booklet implements ExportableInterface
      * @ORM\ManyToOne(targetEntity="DistributionBundle\Entity\DistributionBeneficiary", inversedBy="booklets")
      * @Groups({"FullBooklet"})
      */
-    private $distribution_beneficiary;
+    private $distributionBeneficiary;
 
     public function __construct()
     {
@@ -257,9 +257,9 @@ class Booklet implements ExportableInterface
         return $this->distribution_beneficiary;
     }
 
-    public function setDistributionBeneficiary(DistributionBeneficiary $distribution_beneficiary): self
+    public function setDistributionBeneficiary(DistributionBeneficiary $distributionBeneficiary): self
     {
-        $this->distribution_beneficiary = $distribution_beneficiary;
+        $this->distribution_beneficiary = $distributionBeneficiary;
 
         return $this;
     }

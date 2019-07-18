@@ -259,9 +259,9 @@ class KHMIDPoorAPIProvider extends DefaultAPIProvider
         $household->addHouseholdLocation($householdLocation);
 
         // Set household location and country specifics
-        $country_specific_answers = $this->setCountrySpecificAnswer("KHM", $household, $beneficiary);
-        foreach ($country_specific_answers as $country_specific_answer) {
-            $household->addCountrySpecificAnswer($country_specific_answer);
+        $countrySpecificAnswers = $this->setCountrySpecificAnswer("KHM", $household, $beneficiary);
+        foreach ($countrySpecificAnswers as $countrySpecificAnswer) {
+            $household->addCountrySpecificAnswer($countrySpecificAnswer);
         }
         $this->em->persist($household);
     
