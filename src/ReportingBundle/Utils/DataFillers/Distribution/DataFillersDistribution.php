@@ -59,7 +59,7 @@ class DataFillersDistribution extends DataFillers
     /**
      * Fill in ReportingValue and ReportingDistribution with total of enrolled beneficiaires
      */
-    public function BMS_Distribution_NEB()
+    public function BMSDistributionNEB()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -69,7 +69,7 @@ class DataFillersDistribution extends DataFillers
                                    ->select('count(db.id) AS value', 'dd.id as distribution')
                                    ->groupBy('distribution');
             $results = $qb->getQuery()->getArrayResult();
-            $reference = $this->getReferenceId("BMS_Distribution_NEB");
+            $reference = $this->getReferenceId("BMSDistributionNEB");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -100,7 +100,7 @@ class DataFillersDistribution extends DataFillers
     /**
     * Fill in ReportingValue and ReportingDistribution with total value of distribution
     */
-    public function BMS_Distribution_TDV()
+    public function BMSDistributionTDV()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -126,7 +126,7 @@ class DataFillersDistribution extends DataFillers
                     }
                 }
             }
-            $reference = $this->getReferenceId("BMS_Distribution_TDV");
+            $reference = $this->getReferenceId("BMSDistributionTDV");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -157,7 +157,7 @@ class DataFillersDistribution extends DataFillers
     /**
      * Fill in ReportingValue and ReportingDistribution with modality
      */
-    public function BMS_Distribution_M()
+    public function BMSDistributionM()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -168,7 +168,7 @@ class DataFillersDistribution extends DataFillers
                                    ->leftjoin('m.modality', 'mt')
                                    ->select("CONCAT(mt.name, '-', m.name) AS value", 'dd.id as distribution');
             $results = $qb->getQuery()->getArrayResult();
-            $reference = $this->getReferenceId("BMS_Distribution_M");
+            $reference = $this->getReferenceId("BMSDistributionM");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -199,7 +199,7 @@ class DataFillersDistribution extends DataFillers
     /**
      * Fill in ReportingValue and ReportingDistribution with age breakdown
      */
-    public function BMS_Distribution_AB()
+    public function BMSDistributionAB()
     {
         //Get all distribution beneficiary
         $this->repository = $this->em->getRepository(DistributionBeneficiary::class);
@@ -235,7 +235,7 @@ class DataFillersDistribution extends DataFillers
             foreach ($byInterval as $ageBreakdown) {
                 $this->em->getConnection()->beginTransaction();
                 try {
-                    $reference = $this->getReferenceId("BMS_Distribution_AB");
+                    $reference = $this->getReferenceId("BMSDistributionAB");
                     $newValue = new ReportingValue();
                     $newValue->setValue($ageBreakdown['value']);
                     $newValue->setUnity($ageBreakdown['unity']);
@@ -266,7 +266,7 @@ class DataFillersDistribution extends DataFillers
     /**
      * Fill in ReportingValue and ReportingDistribution with number of men
      */
-    public function BMSU_Distribution_NM()
+    public function BMSUDistributionNM()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -279,7 +279,7 @@ class DataFillersDistribution extends DataFillers
                                    ->select("count(b.id) as value", 'dd.id as distribution')
                                    ->groupBy('distribution');
             $results = $qb->getQuery()->getArrayResult();
-            $reference = $this->getReferenceId("BMSU_Distribution_NM");
+            $reference = $this->getReferenceId("BMSUDistributionNM");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -310,7 +310,7 @@ class DataFillersDistribution extends DataFillers
     /**
     * Fill in ReportingValue and ReportingDistribution with number of women
     */
-    public function BMSU_Distribution_NW()
+    public function BMSUDistributionNW()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -323,7 +323,7 @@ class DataFillersDistribution extends DataFillers
                                    ->select("count(b.id) as value", 'dd.id as distribution')
                                    ->groupBy('distribution');
             $results = $qb->getQuery()->getArrayResult();
-            $reference = $this->getReferenceId("BMSU_Distribution_NW");
+            $reference = $this->getReferenceId("BMSUDistributionNW");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -354,7 +354,7 @@ class DataFillersDistribution extends DataFillers
     /**
     * Fill in ReportingValue and ReportingDistribution with total of vulnerability served
     */
-    public function BMSU_Distribution_TVS()
+    public function BMSUDistributionTVS()
     {
         
         //Get all vulnerability criterion
@@ -404,7 +404,7 @@ class DataFillersDistribution extends DataFillers
             }
             $this->em->getConnection()->beginTransaction();
             try {
-                $reference = $this->getReferenceId("BMSU_Distribution_TVS");
+                $reference = $this->getReferenceId("BMSUDistributionTVS");
                 foreach ($results as $result) {
                     $newValue = new ReportingValue();
                     $newValue->setValue($result['value']);
@@ -437,7 +437,7 @@ class DataFillersDistribution extends DataFillers
     /**
      * Fill in ReportingValue and ReportingDistribution with total of vulnerability served by vulnerability
      */
-    public function BMSU_Distribution_TVSV()
+    public function BMSUDistributionTVSV()
     {
         
         //Get all vulnerability Criterion
@@ -503,7 +503,7 @@ class DataFillersDistribution extends DataFillers
             }
             $this->em->getConnection()->beginTransaction();
             try {
-                $reference = $this->getReferenceId("BMSU_Distribution_TVSV");
+                $reference = $this->getReferenceId("BMSUDistributionTVSV");
                 foreach ($byDistribution as $result) {
                     $newValue = new ReportingValue();
                     $newValue->setValue($result['value']);

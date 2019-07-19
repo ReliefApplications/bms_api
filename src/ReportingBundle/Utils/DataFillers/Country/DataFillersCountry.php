@@ -59,7 +59,7 @@ class DataFillersCountry extends DataFillers
     /**
      * Fill in ReportingValue and ReportingCountry with total households
      */
-    public function BMS_Country_TH()
+    public function BMSCountryTH()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -72,7 +72,7 @@ class DataFillersCountry extends DataFillers
                 ->groupBy('country');
 
             $results = $this->sortByCountry($qb->getQuery()->getArrayResult());
-            $reference = $this->getReferenceId("BMS_Country_TH");
+            $reference = $this->getReferenceId("BMSCountryTH");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -100,7 +100,7 @@ class DataFillersCountry extends DataFillers
     /**
      * Fill in ReportingValue and ReportingCountry with active projects
      */
-    public function BMS_Country_AP()
+    public function BMSCountryAP()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -111,7 +111,7 @@ class DataFillersCountry extends DataFillers
                 ->groupBy('country');
             $results = $qb->getQuery()->getArrayResult();
 
-            $reference = $this->getReferenceId("BMS_Country_AP");
+            $reference = $this->getReferenceId("BMSCountryAP");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -139,7 +139,7 @@ class DataFillersCountry extends DataFillers
     /**
      * Fill in ReportingValue and ReportingCountry with enrolled beneficiaries
      */
-    public function BMS_Country_EB()
+    public function BMSCountryEB()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -153,7 +153,7 @@ class DataFillersCountry extends DataFillers
                 ->groupBy('country');
 
             $results = $this->sortByCountry($qb->getQuery()->getArrayResult());
-            $reference = $this->getReferenceId("BMS_Country_EB");
+            $reference = $this->getReferenceId("BMSCountryEB");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -181,7 +181,7 @@ class DataFillersCountry extends DataFillers
     /**
      * Fill in ReportingValue and ReportingCountry with total number of distributions
      */
-    public function BMS_Country_TND()
+    public function BMSCountryTND()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -194,7 +194,7 @@ class DataFillersCountry extends DataFillers
                 ->groupBy('country');
 
             $results = $this->sortByCountry($qb->getQuery()->getArrayResult());
-            $reference = $this->getReferenceId("BMS_Country_TND");
+            $reference = $this->getReferenceId("BMSCountryTND");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);
@@ -223,7 +223,7 @@ class DataFillersCountry extends DataFillers
      * TODO: Add group by country
      * Fill in ReportingValue and ReportingCountry with the total of completed transactions
      */
-    public function BMS_Country_TTC()
+    public function BMSCountryTTC()
     {
         $this->em->getConnection()->beginTransaction();
         try {
@@ -232,7 +232,7 @@ class DataFillersCountry extends DataFillers
                 ->where('t.transactionStatus = 1')
                 ->select('count(t.id) AS value');
             $results = $qb->getQuery()->getArrayResult();
-            $reference = $this->getReferenceId("BMS_Country_TTC");
+            $reference = $this->getReferenceId("BMSCountryTTC");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue($result['value']);

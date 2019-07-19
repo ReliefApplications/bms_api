@@ -65,12 +65,12 @@ class ProjectDataRetriever extends AbstractDataRetriever
     public function conditionSelect(QueryBuilder $qb, $nameFunction)
     {
         switch ($nameFunction) {
-            case 'BMS_Project_HS':
-            case 'BMS_Project_D':
+            case 'BMSProjectHS':
+            case 'BMSProjectD':
                 $qb->select('p.name AS name')
                     ->groupBy('name');
                 break;
-            case 'BMS_Project_BR':
+            case 'BMSProjectBR':
                 $qb->select('p.name AS name', 'p.target AS target')
                     ->groupBy('name', 'target');
                 break;
@@ -84,10 +84,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Project_D(array $filters)
+    public function BMSProjectD(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Project_D', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Project_D');
+        $qb = $this->getReportingValue('BMSProjectD', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSProjectD');
 
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         $formattedResult = [];
@@ -119,10 +119,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Project_HS(array $filters)
+    public function BMSProjectHS(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Project_HS', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Project_HS');
+        $qb = $this->getReportingValue('BMSProjectHS', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSProjectHS');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -132,10 +132,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Project_AB(array $filters)
+    public function BMSProjectAB(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Project_AB', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Project_AB');
+        $qb = $this->getReportingValue('BMSProjectAB', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSProjectAB');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -145,10 +145,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Project_NMW(array $filters)
+    public function BMSProjectNMW(array $filters)
     {
-        $men = $this->BMSU_Project_NM($filters);
-        $women = $this->BMSU_Project_NW($filters);
+        $men = $this->BMSUProjectNM($filters);
+        $women = $this->BMSUProjectNW($filters);
         $menAndWomen = [];
 
         foreach(array_unique(array_merge(array_keys($men), array_keys($women))) as $period) {
@@ -168,9 +168,9 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @return array
      */
     //TODO: group this with the total amount of vulnerabilities
-    public function BMS_Project_PVS(array $filters)
+    public function BMSProjectPVS(array $filters)
     {
-        $vulnerabilitiesServedPerVulnerability = $this->BMSU_Project_TVSV($filters);
+        $vulnerabilitiesServedPerVulnerability = $this->BMSUProjectTVSV($filters);
         return $this->pieValuesToPieValuePercentage($vulnerabilitiesServedPerVulnerability);
     }
 
@@ -185,11 +185,11 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Project_NM(array $filters)
+    public function BMSUProjectNM(array $filters)
     {
 
-        $qb = $this->getReportingValue('BMSU_Project_NM', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Project_NM');
+        $qb = $this->getReportingValue('BMSUProjectNM', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUProjectNM');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -199,10 +199,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Project_NW(array $filters)
+    public function BMSUProjectNW(array $filters)
     {
-        $qb = $this->getReportingValue('BMSU_Project_NW', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Project_NW');
+        $qb = $this->getReportingValue('BMSUProjectNW', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUProjectNW');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -212,10 +212,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Project_TVSV(array $filters)
+    public function BMSUProjectTVSV(array $filters)
     {
-        $qb = $this->getReportingValue('BMSU_Project_TVSV', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Project_TVSV');
+        $qb = $this->getReportingValue('BMSUProjectTVSV', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUProjectTVSV');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
 
         return $result;
@@ -226,10 +226,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Project_TVS(array $filters)
+    public function BMSUProjectTVS(array $filters)
     {
-        $qb = $this->getReportingValue('BMSU_Project_TVS', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Project_TVS');
+        $qb = $this->getReportingValue('BMSUProjectTVS', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUProjectTVS');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -239,10 +239,10 @@ class ProjectDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMS_Project_BR(array $filters)
+    public function BMSProjectBR(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Project_BR', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Project_BR');
+        $qb = $this->getReportingValue('BMSProjectBR', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSProjectBR');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
 

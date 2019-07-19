@@ -65,7 +65,7 @@ class DataFillersProject
     /**
      * Fill in ReportingValue and ReportingProject with name of donors
      */
-    public function BMS_Project_D()
+    public function BMSProjectD()
     {
         $this->repository = $this->em->getRepository(Donor::class);
         $qb = $this->repository->createQueryBuilder('d')
@@ -76,7 +76,7 @@ class DataFillersProject
 
         $this->em->getConnection()->beginTransaction();
         try {
-            $reference = $this->getReferenceId("BMS_Project_D");
+            $reference = $this->getReferenceId("BMSProjectD");
             foreach ($results as $result) {
                 $newValue = new ReportingValue();
                 $newValue->setValue(1);
@@ -103,7 +103,7 @@ class DataFillersProject
     /**
      * Fill in ReportingValue and ReportingProject with number of Men in a project
      */
-    public function BMSU_Project_NM()
+    public function BMSUProjectNM()
     {
         $projects = $this->getProjects();
         $results = [];
@@ -129,7 +129,7 @@ class DataFillersProject
             }
             $this->em->getConnection()->beginTransaction();
             try {
-                $reference = $this->getReferenceId("BMSU_Project_NM");
+                $reference = $this->getReferenceId("BMSUProjectNM");
                 foreach ($results as $result) {
                     $newValue = new ReportingValue();
                     $newValue->setValue($result['value']);
@@ -159,7 +159,7 @@ class DataFillersProject
     /**
      * Fill in ReportingValue and ReportingProject with number of women in a project
      */
-    public function BMSU_Project_NW()
+    public function BMSUProjectNW()
     {
         $projects = $this->getProjects();
         $results = [];
@@ -185,7 +185,7 @@ class DataFillersProject
             }
             $this->em->getConnection()->beginTransaction();
             try {
-                $reference = $this->getReferenceId("BMSU_Project_NW");
+                $reference = $this->getReferenceId("BMSUProjectNW");
                 foreach ($results as $result) {
                     $newValue = new ReportingValue();
                     $newValue->setValue($result['value']);
@@ -215,7 +215,7 @@ class DataFillersProject
     /**
     * Fill in ReportingValue and ReportingProject with the total of vulnerabilities served by vulnerabily in a project
     */
-    public function BMSU_Project_TVSV()
+    public function BMSUProjectTVSV()
     {
         //Get all vulnerability criterion
         $this->repository = $this->em->getRepository(VulnerabilityCriterion::class);
@@ -270,7 +270,7 @@ class DataFillersProject
             foreach ($byProject as $byProjectByVulnerability) {
                 $this->em->getConnection()->beginTransaction();
                 try {
-                    $reference = $this->getReferenceId("BMSU_Project_TVSV");
+                    $reference = $this->getReferenceId("BMSUProjectTVSV");
                     $newValue = new ReportingValue();
                     $newValue->setValue($byProjectByVulnerability['value']);
                     $newValue->setUnity($byProjectByVulnerability['unity']);
@@ -300,7 +300,7 @@ class DataFillersProject
     /**
      * Fill in ReportingValue and ReportingProject with the total of vulnerabilities served in a project
      */
-    public function BMSU_Project_TVS()
+    public function BMSUProjectTVS()
     {
         //Get all vulnerability criterion
         $this->repository = $this->em->getRepository(VulnerabilityCriterion::class);
@@ -334,7 +334,7 @@ class DataFillersProject
             }
             $this->em->getConnection()->beginTransaction();
             try {
-                $reference = $this->getReferenceId("BMSU_Project_TVS");
+                $reference = $this->getReferenceId("BMSUProjectTVS");
                 foreach ($results as $result) {
                     $newValue = new ReportingValue();
                     $newValue->setValue($result['value']);
@@ -365,7 +365,7 @@ class DataFillersProject
     /**
      * Fill in ReportingValue and ReportingProject with number of household served in a project
      */
-    public function BMS_Project_HS()
+    public function BMSProjectHS()
     {
         $projects = $this->getProjects();
         foreach ($projects as $project) {
@@ -389,7 +389,7 @@ class DataFillersProject
 
             $this->em->getConnection()->beginTransaction();
             try {
-                $reference = $this->getReferenceId("BMS_Project_HS");
+                $reference = $this->getReferenceId("BMSProjectHS");
                 foreach ($results as $result) {
                     $newValue = new ReportingValue();
                     $newValue->setValue($result['value']);
@@ -419,7 +419,7 @@ class DataFillersProject
     /**
      * Fill in ReportingValue and ReportingProject with number of beneficiaries served in a project
      */
-    public function BMS_Project_BR()
+    public function BMSProjectBR()
     {
         $projects = $this->getProjects();
         foreach ($projects as $project) {
@@ -436,7 +436,7 @@ class DataFillersProject
 
             $this->em->getConnection()->beginTransaction();
             try {
-                $reference = $this->getReferenceId("BMS_Project_HS");
+                $reference = $this->getReferenceId("BMSProjectHS");
                 foreach ($results as $result) {
                     $newValue = new ReportingValue();
                     $newValue->setValue($result['value']/$result['target']*100);
@@ -466,7 +466,7 @@ class DataFillersProject
     /**
     * Fill in ReportingValue and ReportingProject with age breakdown in a project
     */
-    public function BMS_Project_AB()
+    public function BMSProjectAB()
     {
         $projects = $this->getProjects();
         //Search the age of all beneficiary in all project and push the result of the query in a array
@@ -493,7 +493,7 @@ class DataFillersProject
             foreach ($byInterval as $ageBreakdown) {
                 $this->em->getConnection()->beginTransaction();
                 try {
-                    $reference = $this->getReferenceId("BMS_Project_AB");
+                    $reference = $this->getReferenceId("BMSProjectAB");
 
                     $newValue = new ReportingValue();
                     $newValue->setValue($ageBreakdown['value']);

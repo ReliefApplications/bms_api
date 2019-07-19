@@ -75,20 +75,20 @@ class DistributionDataRetriever extends AbstractDataRetriever
     public function conditionSelect($qb, $nameFunction)
     {
         switch ($nameFunction) {
-            case 'BMS_Distribution_NEB':
+            case 'BMSDistributionNEB':
                 $qb ->select('d.name AS name')
                     ->groupBy('name');
                 break;
-            case 'BMS_Distribution_TDV':
+            case 'BMSDistributionTDV':
                 $qb ->select('DISTINCT(d.name) AS name', 'd.id AS id')
                     ->groupBy('name', 'id');
                 break;
-            case 'BMSU_Distribution_NM':
-            case 'BMSU_Distribution_NW':
+            case 'BMSUDistributionNM':
+            case 'BMSUDistributionNW':
                 $qb ->select("CONCAT(rv.unity, '/', d.name) AS name")
                     ->groupBy('name');
                 break;
-            case 'BMS_Distribution_M':
+            case 'BMSDistributionM':
                 $qb ->select('DISTINCT(d.name) AS name')
                     ->groupBy('name');
                 break;
@@ -102,10 +102,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Distribution_NEB(array $filters)
+    public function BMSDistributionNEB(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Distribution_NEB', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Distribution_NEB');
+        $qb = $this->getReportingValue('BMSDistributionNEB', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSDistributionNEB');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -115,10 +115,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Distribution_TDV(array $filters)
+    public function BMSDistributionTDV(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Distribution_TDV', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Distribution_TDV');
+        $qb = $this->getReportingValue('BMSDistributionTDV', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSDistributionTDV');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
 
@@ -129,10 +129,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Distribution_M(array $filters)
+    public function BMSDistributionM(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Distribution_M', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Distribution_M');
+        $qb = $this->getReportingValue('BMSDistributionM', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSDistributionM');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -142,10 +142,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Distribution_AB(array $filters)
+    public function BMSDistributionAB(array $filters)
     {
-        $qb = $this->getReportingValue('BMS_Distribution_AB', $filters);
-        $qb = $this->conditionSelect($qb, 'BMS_Distribution_AB');
+        $qb = $this->getReportingValue('BMSDistributionAB', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSDistributionAB');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -155,10 +155,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Distribution_NMW(array $filters)
+    public function BMSDistributionNMW(array $filters)
     {
-        $men = $this->BMSU_Distribution_NM($filters);
-        $women = $this->BMSU_Distribution_NW($filters);
+        $men = $this->BMSUDistributionNM($filters);
+        $women = $this->BMSUDistributionNW($filters);
         $menAndWomen = [];
 
         foreach(array_unique(array_merge(array_keys($men), array_keys($women))) as $period) {
@@ -177,9 +177,9 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Distribution_PVS(array $filters)
+    public function BMSDistributionPVS(array $filters)
     {
-        return $this->pieValuesToPieValuePercentage($this->BMSU_Distribution_TVS($filters));
+        return $this->pieValuesToPieValuePercentage($this->BMSUDistributionTVS($filters));
     }
 
     /**
@@ -187,9 +187,9 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return array
      */
-    public function BMS_Distribution_BR(array $filters)
+    public function BMSDistributionBR(array $filters)
     {
-        $beneficiariesEnrolled = $this->BMS_Distribution_NEB($filters);
+        $beneficiariesEnrolled = $this->BMSDistributionNEB($filters);
 
         $projectTarget = $this->em->createQueryBuilder()
             ->from(Project::class, 'p')
@@ -230,10 +230,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Distribution_NM(array $filters)
+    public function BMSUDistributionNM(array $filters)
     {
-        $qb = $this->getReportingValue('BMSU_Distribution_NM', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Distribution_NM');
+        $qb = $this->getReportingValue('BMSUDistributionNM', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUDistributionNM');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -243,10 +243,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Distribution_NW(array $filters)
+    public function BMSUDistributionNW(array $filters)
     {
-        $qb = $this->getReportingValue('BMSU_Distribution_NW', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Distribution_NW');
+        $qb = $this->getReportingValue('BMSUDistributionNW', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUDistributionNW');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -256,10 +256,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Distribution_TVS(array $filters)
+    public function BMSUDistributionTVS(array $filters)
     {
-        $qb = $this->getReportingValue('BMSU_Distribution_TVS', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Distribution_TVS');
+        $qb = $this->getReportingValue('BMSUDistributionTVS', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUDistributionTVS');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
@@ -269,10 +269,10 @@ class DistributionDataRetriever extends AbstractDataRetriever
      * @param array $filters
      * @return mixed
      */
-    public function BMSU_Distribution_TVSV(array $filters)
+    public function BMSUDistributionTVSV(array $filters)
     {
-        $qb = $this->getReportingValue('BMSU_Distribution_TVSV', $filters);
-        $qb = $this->conditionSelect($qb, 'BMSU_Distribution_TVSV');
+        $qb = $this->getReportingValue('BMSUDistributionTVSV', $filters);
+        $qb = $this->conditionSelect($qb, 'BMSUDistributionTVSV');
         $result = $this->formatByFrequency($qb, $filters['frequency'], $filters['period']);
         return $result;
     }
