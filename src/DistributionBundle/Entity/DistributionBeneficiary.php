@@ -56,7 +56,7 @@ class DistributionBeneficiary
     /**
      * @var Booklet
      *
-     * @ORM\OneToMany(targetEntity="VoucherBundle\Entity\Booklet", mappedBy="distribution_beneficiary", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="VoucherBundle\Entity\Booklet", mappedBy="distributionBeneficiary", cascade={"persist", "remove"})
      * @Groups({"FullHousehold", "SmallHousehold", "FullDistribution", "ValidatedDistribution"})
      */
     private $booklets;
