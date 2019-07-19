@@ -254,12 +254,12 @@ class Booklet implements ExportableInterface
 
     public function getDistributionBeneficiary(): ?DistributionBeneficiary
     {
-        return $this->distribution_beneficiary;
+        return $this->distributionBeneficiary;
     }
 
     public function setDistributionBeneficiary(DistributionBeneficiary $distributionBeneficiary): self
     {
-        $this->distribution_beneficiary = $distributionBeneficiary;
+        $this->distributionBeneficiary = $distributionBeneficiary;
 
         return $this;
     }
