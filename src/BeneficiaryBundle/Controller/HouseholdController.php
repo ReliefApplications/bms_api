@@ -140,7 +140,7 @@ class HouseholdController extends Controller
         /** @var HouseholdService $householdService */
         $householdService = $this->get('beneficiary.household_service');
         try {
-            $household = $householdService->createOrEdit($householdArray, $projectsArray, null);
+            $household = $householdService->create($householdArray, $projectsArray);
         } catch (ValidationException $exception) {
             return new Response(json_encode(current($exception->getErrors())), Response::HTTP_BAD_REQUEST);
         } catch (\Exception $e) {
@@ -207,7 +207,7 @@ class HouseholdController extends Controller
         /** @var HouseholdService $householdService */
         $householdService = $this->get('beneficiary.household_service');
         try {
-            $household = $householdService->createOrEdit($householdArray, $projectsArray, $household);
+            $household = $householdService->update($householdArray, $projectsArray, $household);
         } catch (ValidationException $exception) {
             return new Response(json_encode(current($exception->getErrors())), Response::HTTP_BAD_REQUEST);
         } catch (\Exception $e) {
